@@ -29,8 +29,8 @@ const PRECACHE_ASSETS = [
   'shared/js/firebase-config.js',
   'shared/icons/icon-192x192.png',
   'shared/icons/icon-512x512.png',
-  'shared/admin/css/admin.css',
-  'shared/admin/js/admin.js'
+  'shared/css/admin.css',
+  'shared/js/admin.js'
 ];
 /* NOTE: each customer's own index.html / admin pages are NOT listed here
    (there are many, one per wedding, e.g. /a/index.html, /b/index.html...).
