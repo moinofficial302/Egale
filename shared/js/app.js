@@ -524,16 +524,18 @@ function showToast(message) {
 }
 
 /* ═══════════════════════════════
-   8. WHATSAPP / CREATOR LINK
+   8. CREATOR LINK — opens the root
+      landing page (index.html at domain root)
 ═══════════════════════════════ */
 function openWhatsApp() {
-  window.open('https://wa.me/919021958286?text=Hi%20Sir%2C%20I%20want%20to%20get%20a%20wedding%20invitation%20website%20made.', '_blank');
+  window.location.href = '/index.html';
 }
 
 /* ═══════════════════════════════
    8b. BACKGROUND MUSIC
    Upload a file named "wedding-music.mp3" into an "audio" folder
-   at the site root (audio/wedding-music.mp3) for this to work.
+   at shared/audio/wedding-music.mp3 for this to work (see the
+   <audio> tag in index.html — path is ../shared/audio/...).
    Autoplay-with-sound is blocked by browsers until the visitor
    interacts with the page, so playback starts on the envelope tap
    (see openEnvelope above) rather than on page load.
