@@ -66,7 +66,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     // '../sw.js' -> registered scope defaults to its own folder (site root),
     // which covers /admin/ too since it's a sub-path.
-    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+    navigator.serviceWorker.register('../../sw.js')
       .then(reg => console.log('[Admin] Service worker registered:', reg.scope))
       .catch(err => console.warn('[Admin] Service worker registration failed:', err));
   });
