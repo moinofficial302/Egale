@@ -24,7 +24,7 @@ if ('serviceWorker' in navigator) {
     // Relative path (not '/sw.js') so this also works when the site is
     // hosted in a sub-folder, e.g. GitHub Pages project sites:
     // https://username.github.io/repo-name/
-    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+    navigator.serviceWorker.register('../sw.js')
       .then(reg => console.log('[App] Service worker registered:', reg.scope))
       .catch(err => console.warn('[App] Service worker registration failed:', err));
   });
@@ -528,7 +528,7 @@ function showToast(message) {
       landing page (index.html at domain root)
 ═══════════════════════════════ */
 function openWhatsApp() {
-  window.location.href = '/index.html';
+  window.location.href = '../index.html';
 }
 
 /* ═══════════════════════════════
