@@ -360,6 +360,104 @@ a:hover {
     0 0 32px rgba(130, 232, 255, 0.18);
 }
 
+
+/* ═══════════════════════════════════════════════════
+   PREMIUM REFINEMENT PASS
+   Foil-embossed headings (legible, not full rainbow fill),
+   authentic holographic grain, jeweled badge border, smoother
+   premium easing, and a styled scrollbar for desktop.
+═══════════════════════════════════════════════════ */
+
+/* Premium easing curve used across the theme's interactive elements */
+.card, .venue-map-btn, .send-btn, input, textarea, select, a {
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Foil-embossed section headings — solid rich ink color with a
+   slow specular highlight sweeping across, instead of a full
+   rainbow fill. Reads as engraved metal foil, stays legible,
+   and feels considerably more premium/professional than a
+   constant disco-shimmer would on body copy-sized headings. */
+@keyframes foilSweep {
+  0%   { background-position: -120% 0; }
+  100% { background-position: 220% 0; }
+}
+.section-title {
+  position: relative;
+  letter-spacing: 1px;
+  background-image: linear-gradient(
+    100deg,
+    var(--text-dark) 30%,
+    rgba(255,255,255,0.95) 45%,
+    var(--rose) 50%,
+    rgba(255,255,255,0.95) 55%,
+    var(--text-dark) 70%
+  );
+  background-size: 250% 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  animation: foilSweep 5s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+/* Authentic holographic foil grain — a very fine dot texture
+   sitting behind all content, visible through the glass cards.
+   This is what makes the glassmorphism read as "holographic foil"
+   rather than plain frosted glass. */
+body { position: relative; }
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    radial-gradient(rgba(255,255,255,0.9) 0.6px, transparent 0.6px),
+    radial-gradient(rgba(180,160,255,0.35) 0.6px, transparent 0.6px);
+  background-size: 3px 3px, 5px 5px;
+  background-position: 0 0, 1.5px 1.5px;
+  mix-blend-mode: overlay;
+}
+
+/* Hero badge sits directly on the photo as overlay text with two
+   thin decorative lines (no background/pill in this design) — give
+   those lines a holographic shimmer and add a soft glow to the
+   text itself instead of adding any background, so the photo
+   underneath stays fully visible. */
+.hero-badge {
+  text-shadow: 0 0 12px rgba(255,255,255,0.5), 0 1px 3px rgba(0,0,0,0.25);
+}
+.hero-badge::before, .hero-badge::after {
+  background: var(--holo-gradient);
+  background-size: 300% 100%;
+  animation: holoSweep 5s ease-in-out infinite;
+  height: 1.5px;
+  opacity: 0.85;
+}
+
+/* Custom scrollbar (desktop) — subtle holographic thumb instead
+   of the default grey OS scrollbar, ties the chrome into the theme */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--holo-cyan), var(--holo-violet));
+  border-radius: 8px;
+  border: 2px solid var(--cream);
+}
+
+/* Slightly richer depth on the primary CTA so it reads as the
+   clear, confident action rather than blending into the glass UI */
+.send-btn {
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
