@@ -1,99 +1,371 @@
 /* ═══════════════════════════════════════════════════
-   STYLE2.CSS — "HOLOGRAM" THEME
-   A completely different look from the default pink theme
-   and the Royal Gold theme: icy pearl base + animated
-   iridescent/rainbow-shimmer accents on the door, buttons,
-   and cards. Load this AFTER shared/css/style.css.
+   STYLE2.CSS — FULL HOLOGRAM THEME
+   Load this AFTER shared/css/style.css.
+   Full iridescent glass + neon spectrum + animated hologram UI.
 ═══════════════════════════════════════════════════ */
 
 :root {
-  /* Base palette — icy pearl / silver / violet instead of
-     pink or gold. This is what the plain text & backgrounds use. */
-  --rose:        #6E62A6;   /* muted iridescent violet */
-  --rose-dark:   #4A4078;
-  --rose-light:  #C9BFEF;   /* pale lavender-pearl */
-  --blush:       #F3F1FB;   /* icy lavender-white background tint */
-  --cream:       #FBFAFF;
+  --rose: #8f7dff;
+  --rose-dark: #5b42c8;
+  --rose-light: #d9d3ff;
+  --blush: #eef5ff;
+  --cream: #fbfcff;
 
-  --gold:        #B9AEDB;   /* pearlescent silver-lavender (used for
-                                card corner accents / decorative lines) */
-  --gold-dark:   #8F82C2;
+  --gold: #d8d5ff;
+  --gold-dark: #9e95e8;
 
-  --text-dark:   #191622;
-  --text-mid:    #423C58;
-  --text-light:  #6B6484;
+  --text-dark: #161425;
+  --text-mid: #3e3a5d;
+  --text-light: #6d678b;
 
-  --shadow-sm: 0 2px 10px rgba(74,64,120,0.10);
-  --shadow-md: 0 8px 24px rgba(74,64,120,0.16);
-  --shadow-lg: 0 16px 44px rgba(74,64,120,0.22);
+  --holo-pink: #ff8edb;
+  --holo-gold: #ffe29a;
+  --holo-green: #9dffbd;
+  --holo-cyan: #82e8ff;
+  --holo-blue: #8ea8ff;
+  --holo-violet: #c69aff;
 
-  /* Door screen base tones (icy violet → deep indigo-black).
-     The actual "hologram" shimmer on top of this is added below. */
-  --door-c1: #eaf6ff;
-  --door-c2: #c9b6ff;
-  --door-c3: #6f5fb0;
-  --door-c4: #120a24;
-  --door-seam: #d9c9ff;
+  --holo-gradient: linear-gradient(
+    115deg,
+    var(--holo-pink) 0%,
+    var(--holo-gold) 18%,
+    var(--holo-green) 36%,
+    var(--holo-cyan) 52%,
+    var(--holo-blue) 68%,
+    var(--holo-violet) 84%,
+    var(--holo-pink) 100%
+  );
+
+  --glass: rgba(255, 255, 255, 0.62);
+  --glass-strong: rgba(255, 255, 255, 0.78);
+  --holo-border: rgba(180, 170, 255, 0.48);
+
+  --shadow-sm:
+    0 2px 12px rgba(79, 55, 150, 0.10),
+    0 0 12px rgba(130, 220, 255, 0.08);
+
+  --shadow-md:
+    0 10px 32px rgba(79, 55, 150, 0.16),
+    0 0 22px rgba(130, 220, 255, 0.12);
+
+  --shadow-lg:
+    0 20px 55px rgba(70, 45, 145, 0.22),
+    0 0 36px rgba(130, 220, 255, 0.16);
+
+  --door-c1: #f3fbff;
+  --door-c2: #c7d6ff;
+  --door-c3: #8a71d6;
+  --door-c4: #100923;
+  --door-seam: #e2dbff;
 }
 
-/* ── Animated rainbow sweep, reused everywhere below ── */
+
+/* ═══════════════════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════════════════ */
+
 @keyframes holoSweep {
   0%   { background-position: 0% 50%; }
   50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* ═══ DOOR SCREEN — genuine holographic shimmer overlay ═══ */
+@keyframes holoFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(0.5deg);
+  }
+}
+
+@keyframes holoGlow {
+  0%, 100% {
+    box-shadow:
+      0 0 12px rgba(255, 142, 219, 0.20),
+      0 0 24px rgba(130, 232, 255, 0.14);
+  }
+  50% {
+    box-shadow:
+      0 0 20px rgba(255, 226, 154, 0.32),
+      0 0 42px rgba(198, 154, 255, 0.25);
+  }
+}
+
+@keyframes holoBorder {
+  0%   { border-color: rgba(255, 142, 219, 0.65); }
+  25%  { border-color: rgba(157, 255, 189, 0.65); }
+  50%  { border-color: rgba(130, 232, 255, 0.65); }
+  75%  { border-color: rgba(198, 154, 255, 0.65); }
+  100% { border-color: rgba(255, 142, 219, 0.65); }
+}
+
+@keyframes holoShine {
+  0% {
+    transform: translateX(-130%) skewX(-18deg);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.45;
+  }
+  55% {
+    opacity: 0.12;
+  }
+  100% {
+    transform: translateX(230%) skewX(-18deg);
+    opacity: 0;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════
+   GLOBAL HOLOGRAM ATMOSPHERE
+═══════════════════════════════════════════════════ */
+
+body {
+  background:
+    radial-gradient(circle at 10% 10%, rgba(255, 174, 225, 0.20), transparent 28%),
+    radial-gradient(circle at 90% 18%, rgba(130, 232, 255, 0.22), transparent 30%),
+    radial-gradient(circle at 50% 100%, rgba(190, 155, 255, 0.18), transparent 34%),
+    linear-gradient(135deg, #fbfcff 0%, #f0f5ff 45%, #f9f4ff 100%);
+}
+
+::selection {
+  background: rgba(160, 135, 255, 0.35);
+  color: var(--text-dark);
+}
+
+
+/* ═══════════════════════════════════════════════════
+   FULL HOLOGRAM GLASS CARDS
+═══════════════════════════════════════════════════ */
+
+.card {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.82), rgba(245,242,255,0.55)),
+    var(--glass);
+  border: 1px solid var(--holo-border);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(16px) saturate(145%);
+  -webkit-backdrop-filter: blur(16px) saturate(145%);
+  animation: holoGlow 5s ease-in-out infinite;
+}
+
+.card::before,
+.card::after {
+  border-color: var(--gold);
+  box-shadow:
+    0 0 8px rgba(255, 180, 230, 0.35),
+    0 0 14px rgba(130, 232, 255, 0.25);
+  animation: holoBorder 6s linear infinite;
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 32%;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.38),
+    transparent
+  );
+  animation: holoShine 7s ease-in-out infinite;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   DOOR SCREEN — FULL HOLOGRAPHIC SURFACE
+═══════════════════════════════════════════════════ */
+
 #envelope-cover::before,
 .door-left::before,
 .door-right::before {
-  /* layer a moving rainbow-foil gradient on top of the existing
-     texture using soft-light so it tints without hiding it */
   background-image:
     linear-gradient(
       115deg,
-      rgba(255,150,220,0.35) 0%,
-      rgba(255,220,150,0.30) 16%,
-      rgba(180,255,190,0.30) 32%,
-      rgba(150,220,255,0.35) 48%,
-      rgba(200,160,255,0.35) 64%,
-      rgba(255,150,220,0.35) 82%,
-      rgba(255,220,150,0.30) 100%
+      rgba(255, 142, 219, 0.48) 0%,
+      rgba(255, 226, 154, 0.38) 16%,
+      rgba(157, 255, 189, 0.40) 32%,
+      rgba(130, 232, 255, 0.48) 48%,
+      rgba(142, 168, 255, 0.42) 64%,
+      rgba(198, 154, 255, 0.48) 80%,
+      rgba(255, 142, 219, 0.45) 100%
     );
-  background-size: 300% 300%;
-  mix-blend-mode: soft-light;
+  background-size: 320% 320%;
+  mix-blend-mode: screen;
   animation: holoSweep 6s ease-in-out infinite;
 }
 
-/* ═══ BUTTONS — holographic animated gradient ═══ */
+#envelope-cover,
+.door-left,
+.door-right {
+  filter:
+    saturate(120%)
+    contrast(104%);
+}
+
+
+/* ═══════════════════════════════════════════════════
+   HOLOGRAPHIC BUTTONS
+═══════════════════════════════════════════════════ */
+
 .venue-map-btn,
 .send-btn {
-  background: linear-gradient(115deg,
-    #ff9edc 0%, #ffd89e 20%, #b4ffbe 40%,
-    #96dcff 60%, #c8a0ff 80%, #ff9edc 100%);
-  background-size: 300% 300%;
-  animation: holoSweep 5s ease-in-out infinite;
-  color: var(--text-dark);
-  text-shadow: 0 1px 2px rgba(255,255,255,0.5);
-}
-.venue-map-btn:hover, .send-btn:hover {
-  box-shadow: 0 8px 22px rgba(150,120,220,0.35);
-}
-
-/* ═══ CARD CORNER ACCENTS — soft pearlescent shimmer ═══ */
-.card::before, .card::after {
-  border-color: var(--gold);
-  box-shadow: 0 0 6px rgba(185,174,219,0.6);
+  position: relative;
+  overflow: hidden;
+  background: var(--holo-gradient);
+  background-size: 350% 350%;
+  color: #171321;
+  border: 1px solid rgba(255,255,255,0.75);
+  box-shadow:
+    0 7px 20px rgba(126, 98, 220, 0.20),
+    0 0 16px rgba(130, 232, 255, 0.16);
+  text-shadow: 0 1px 2px rgba(255,255,255,0.65);
+  animation:
+    holoSweep 5s ease-in-out infinite,
+    holoGlow 4s ease-in-out infinite;
 }
 
-/* ═══ Decorative "&" ampersands + section-title hearts get a
-       subtle holographic text shimmer for extra sparkle ═══ */
-.hero-amp, .names-ampersand {
-  background: linear-gradient(115deg,
-    #ff9edc, #ffd89e, #b4ffbe, #96dcff, #c8a0ff, #ff9edc);
-  background-size: 300% 100%;
+.venue-map-btn::before,
+.send-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 28%;
+  height: 100%;
+  background: rgba(255,255,255,0.52);
+  transform: skewX(-18deg);
+  animation: holoShine 4.8s ease-in-out infinite;
+}
+
+.venue-map-btn:hover,
+.send-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 28px rgba(126, 98, 220, 0.28),
+    0 0 30px rgba(130, 232, 255, 0.26);
+}
+
+.venue-map-btn:active,
+.send-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+
+/* ═══════════════════════════════════════════════════
+   HOLOGRAPHIC TEXT
+═══════════════════════════════════════════════════ */
+
+.hero-amp,
+.names-ampersand {
+  background: var(--holo-gradient);
+  background-size: 350% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: holoSweep 5s ease-in-out infinite;
+  filter: drop-shadow(0 2px 7px rgba(140, 120, 255, 0.20));
+}
+
+
+/* ═══════════════════════════════════════════════════
+   INPUTS / FORM ELEMENTS
+═══════════════════════════════════════════════════ */
+
+input,
+textarea,
+select {
+  background: rgba(255,255,255,0.64);
+  border-color: rgba(160, 145, 225, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: rgba(130, 232, 255, 0.85);
+  box-shadow:
+    0 0 0 3px rgba(130, 232, 255, 0.14),
+    0 0 18px rgba(198, 154, 255, 0.18);
+}
+
+
+/* ═══════════════════════════════════════════════════
+   ICONS / SMALL DECORATIONS
+═══════════════════════════════════════════════════ */
+
+.icon,
+.card-icon,
+.section-icon {
+  filter:
+    drop-shadow(0 0 7px rgba(130, 232, 255, 0.24))
+    drop-shadow(0 0 12px rgba(255, 142, 219, 0.14));
+}
+
+
+/* ═══════════════════════════════════════════════════
+   DIVIDERS & DECORATIVE LINES
+═══════════════════════════════════════════════════ */
+
+hr,
+.divider {
+  border-color: transparent;
+  background: var(--holo-gradient);
+  background-size: 300% 100%;
+  animation: holoSweep 7s ease-in-out infinite;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   LINKS & INTERACTIVE TEXT
+═══════════════════════════════════════════════════ */
+
+a {
+  transition:
+    color 0.25s ease,
+    text-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+a:hover {
+  text-shadow:
+    0 0 10px rgba(130, 232, 255, 0.22),
+    0 0 16px rgba(198, 154, 255, 0.16);
+}
+
+
+/* ═══════════════════════════════════════════════════
+   FINAL HOLOGRAM POLISH
+═══════════════════════════════════════════════════ */
+
+.card,
+.venue-map-btn,
+.send-btn {
+  isolation: isolate;
+}
+
+.card:hover {
+  box-shadow:
+    0 18px 42px rgba(79, 55, 150, 0.20),
+    0 0 32px rgba(130, 232, 255, 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
 }
