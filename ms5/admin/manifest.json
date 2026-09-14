@@ -1,7 +1,7 @@
 {
   "name": "Jui & Malhar — Admin Panel",
   "short_name": "Wedding Admin",
-  "description": "Manage RSVPs and edit content for Jui & Malhar's wedding site",
+  "description": "Manage RSVPs and edit content for Mr & Mrs wedding site",
   "start_url": "./login.html",
   "scope": "./",
   "display": "standalone",
