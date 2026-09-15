@@ -1682,10 +1682,8 @@ body {
    WEDDING NAMES — metallic gold-foil typography
 ═══════════════════════════════════════════════════ */
 .names-person {
-  background-image: var(--foil-gradient);
-  background-size: 200% auto;
-  -webkit-background-clip: text; background-clip: text;
-  color: transparent; -webkit-text-fill-color: transparent;
+  color: var(--rose-dark);
+  text-shadow: 0 1px 2px rgba(184,138,42,0.15);
 }
 .names-ampersand { color: var(--antique-gold); }
 /* Small ornamental flourish under the ampersand */
@@ -1702,11 +1700,9 @@ body {
    SECTION HEADINGS + DIVIDERS — consistent royal identity
 ═══════════════════════════════════════════════════ */
 .section-title {
-  background-image: var(--foil-gradient);
-  background-size: 200% auto;
-  -webkit-background-clip: text; background-clip: text;
-  color: transparent; -webkit-text-fill-color: transparent;
+  color: var(--royal-brown);
   letter-spacing: 1px;
+  text-shadow: 0 1px 2px rgba(184,138,42,0.12);
 }
 .divider span::before { content: '❦ '; }
 .divider span::after  { content: ' ❦'; }
@@ -1744,14 +1740,30 @@ body {
 .timeline-item { border-bottom-color: rgba(184,138,42,0.15); }
 .prewedding-item { border-bottom-color: rgba(184,138,42,0.15); }
 
-/* Countdown — ivory boxes, gold border, brown numbers */
-.countdown-section::before { background: var(--antique-gold); }
-.count-item { border-color: rgba(184,138,42,0.25); }
+/* Countdown — ivory boxes, gold border, brown numbers.
+   (count-item was inheriting the shared --rose-light as a SOLID
+   fill, which is champagne-gold in this theme — that's what made
+   the whole countdown block look like one solid gold slab.) */
+.count-item {
+  background: var(--warm-ivory);
+  border: 1px solid var(--antique-gold);
+  box-shadow: var(--shadow-sm);
+}
 .count-num  { color: var(--royal-brown); }
 .count-unit { color: var(--text-light); letter-spacing: 1.5px; }
 
-/* Photo slideshow frame — champagne + antique gold + ivory margin */
-.slideshow { border: 1px solid var(--champagne-gold); box-shadow: var(--shadow-md); }
+/* Photo slideshow frame — the base uses a layered box-shadow
+   (not a real border) to create its cream-padding + gold-ring
+   effect; overriding box-shadow with a plain shadow wiped that
+   out. Rebuilding the same layered technique in gold restores
+   both the border AND the breathing-room gap around the photo. */
+.slideshow {
+  box-shadow:
+    0 0 0 8px  var(--warm-ivory),
+    0 0 0 10px var(--antique-gold),
+    0 0 0 11px rgba(42,26,11,0.25),
+    0 16px 36px rgba(42,26,11,0.28);
+}
 .slide-dot.active { background: var(--antique-gold); }
 
 
