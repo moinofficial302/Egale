@@ -4,12 +4,12 @@
 ═══════════════════════════════════════════════════ */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDs3MUBiCn8yHQJ6HTvO2gV-OPrql0ed6I",
-  authDomain: "mj-wedding-3d797.firebaseapp.com",
-  projectId: "mj-wedding-3d797",
-  storageBucket: "mj-wedding-3d797.firebasestorage.app",
-  messagingSenderId: "148752139043",
-  appId: "1:148752139043:web:6cbcd1a5471a05dc5c0296"
+  apiKey: "AIzaSyCJ0AB8MhuM5COd7BSMJzSzoJFaLqpdHns",
+  authDomain: "egale-c959f.firebaseapp.com",
+  projectId: "egale-c959f",
+  storageBucket: "egale-c959f.firebasestorage.app",
+  messagingSenderId: "252018665202",
+  appId: "1:252018665202:web:a6cfd16c2cbd8e988dd26b"
 };
 
 firebase.initializeApp(firebaseConfig);
