@@ -1595,35 +1595,299 @@ body {
   }
 }
 /* ═══════════════════════════════════════════════════
-   THEME OVERRIDE — Royal Gold
-   A warm, luxurious gold/bronze/ivory palette that matches
-   the golden door-opening animation. Load this AFTER
-   shared/css/style.css.
+   THEME OVERRIDE — ROYAL GOLD
+   "Luxury Royal Indian Wedding Invitation"
+   Deep espresso brown + antique gold + champagne + warm ivory.
+   Gold is used as an ACCENT (borders, typography, ornaments,
+   buttons, timeline nodes) — never as a flat yellow fill.
+
+   Visual balance target: 60% warm ivory/cream, 25% deep brown/
+   espresso, 10% antique gold, 5% champagne highlight.
+
+   This section only OVERRIDES the shared rose theme above —
+   it does not duplicate it. Load this file after style.css.
 ═══════════════════════════════════════════════════ */
 
 :root {
-  /* Main site palette — warm bronze/gold/ivory instead of pink */
-  --rose:        #8a5a1f;   /* deep antique bronze (was pink) */
-  --rose-dark:   #5f3c12;
-  --rose-light:  #e8c992;   /* soft champagne gold */
-  --blush:       #faf3e2;   /* warm ivory background tint */
-  --cream:       #fdf9f0;
+  /* ── Compatibility variables (everything in the shared CSS
+     above is written against these — remapping them here is
+     what re-themes the whole site without touching a single
+     shared rule) ── */
+  --rose:        #8A5A1F;   /* antique gold-brown — accents, buttons, nodes */
+  --rose-dark:   #5F3C12;   /* deeper antique gold — hover/gradient ends */
+  --rose-light:  #E8C992;   /* champagne gold — dividers, light accents */
+  --blush:       #FAF3E2;   /* warm ivory tint — secondary section backgrounds */
+  --cream:       #FFF9ED;   /* warm ivory — primary background */
 
-  --gold:        #cda039;   /* bright gold accent */
-  --gold-dark:   #a67c25;
+  --gold:        #B88A2A;   /* antique gold — borders, card corners */
+  --gold-dark:   #8A6017;
 
-  --text-dark:   #2b1d0e;
-  --text-mid:    #4a3620;
-  --text-light:  #6e5a3f;
+  --text-dark:   #332313;   /* main text */
+  --text-mid:    #5A4630;   /* secondary text */
+  --text-light:  #75644D;   /* muted text */
 
-  --shadow-sm: 0 2px 10px rgba(95,60,18,0.10);
-  --shadow-md: 0 8px 24px rgba(95,60,18,0.16);
-  --shadow-lg: 0 16px 44px rgba(95,60,18,0.22);
+  /* Tinted shadows (espresso, not flat black) */
+  --shadow-sm: 0 2px 10px rgba(42,26,11,0.08);
+  --shadow-md: 0 8px 24px rgba(42,26,11,0.14);
+  --shadow-lg: 0 16px 44px rgba(42,26,11,0.20);
 
-  /* Door-opening screen — the "Royal Golden Gate" look */
-  --door-c1: #f3d488;
-  --door-c2: #c99a3e;
-  --door-c3: #6b4a17;
-  --door-c4: #170f06;
-  --door-seam: #f0cf7e;
+  /* Door screen — "Royal Palace Golden Gate": espresso edges,
+     antique gold mid-tone, soft-gold/champagne at the light center */
+  --door-c1: #F3DEAA;
+  --door-c2: #B88A2A;
+  --door-c3: #4A3018;
+  --door-c4: #160D05;
+  --door-seam: #E5C77A;
+
+  /* Named palette (for the new rules below — same colors,
+     clearer names, per the brief) */
+  --royal-brown:    #2A1A0B;
+  --espresso:       #160D05;
+  --antique-gold:   #B88A2A;
+  --champagne-gold: #E5C77A;
+  --soft-gold:      #F3DEAA;
+  --warm-ivory:     #FFF9ED;
+
+  /* Reusable metallic gold-foil gradient for headings/names */
+  --foil-gradient: linear-gradient(
+    135deg,
+    #8A641E 0%, #E5C77A 30%, #FFF0B8 48%,
+    #B88A2A 65%, #F3DEAA 82%, #8A641E 100%
+  );
 }
+
+
+/* ═══════════════════════════════════════════════════
+   HERO — remove the navy-blue fallback, cinematic
+   espresso lighting instead. Photo itself is untouched.
+═══════════════════════════════════════════════════ */
+.hero {
+  background: linear-gradient(160deg, var(--royal-brown) 0%, var(--espresso) 60%, #0d0803 100%);
+}
+.hero-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(22,13,5,0.10) 0%,
+    rgba(42,26,11,0.35) 45%,
+    rgba(22,13,5,0.72) 100%
+  );
+}
+/* Subtle warm vignette + thin antique-gold frame around the photo */
+.hero { box-shadow: inset 0 0 90px 20px rgba(22,13,5,0.45); }
+.hero-badge::before, .hero-badge::after { background: rgba(232,201,146,0.55); }
+.hero-amp, .hero-heart { color: var(--champagne-gold); }
+
+
+/* ═══════════════════════════════════════════════════
+   WEDDING NAMES — metallic gold-foil typography
+═══════════════════════════════════════════════════ */
+.names-person {
+  background-image: var(--foil-gradient);
+  background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent; -webkit-text-fill-color: transparent;
+}
+.names-ampersand { color: var(--antique-gold); }
+/* Small ornamental flourish under the ampersand */
+.names-ampersand::after {
+  content: '❦';
+  display: block;
+  font-size: 13px;
+  color: var(--champagne-gold);
+  margin-top: 2px;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   SECTION HEADINGS + DIVIDERS — consistent royal identity
+═══════════════════════════════════════════════════ */
+.section-title {
+  background-image: var(--foil-gradient);
+  background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent; -webkit-text-fill-color: transparent;
+  letter-spacing: 1px;
+}
+.divider span::before { content: '❦ '; }
+.divider span::after  { content: ' ❦'; }
+.section-icon { border-color: var(--antique-gold); color: var(--antique-gold); }
+
+
+/* ═══════════════════════════════════════════════════
+   SCRATCH / INVITE — remove leftover hardcoded pink shadows
+═══════════════════════════════════════════════════ */
+.scratch-title   { text-shadow: 0 1px 3px rgba(42,26,11,0.16); }
+.scratch-wrapper { box-shadow: 0 10px 30px rgba(42,26,11,0.28); }
+.scratch-revealed{ border-color: rgba(184,138,42,0.20); }
+.date-sub { color: var(--gold-dark); }
+
+
+/* ═══════════════════════════════════════════════════
+   CARDS — printed-invitation feel: thin gold border,
+   soft brown shadow, restrained corner ornament
+═══════════════════════════════════════════════════ */
+.card {
+  border-radius: 14px;
+  border: 1px solid var(--antique-gold);
+  background:
+    radial-gradient(ellipse at top left, rgba(184,138,42,0.05), transparent 60%),
+    var(--warm-ivory);
+}
+.card::before, .card::after {
+  border-color: var(--antique-gold);
+  width: 16px; height: 16px;
+  border-width: 1.5px;
+}
+
+/* Timeline nodes as small gold ornaments */
+.tl-dot { background: var(--antique-gold); box-shadow: 0 0 0 4px rgba(184,138,42,0.15); }
+.timeline-item { border-bottom-color: rgba(184,138,42,0.15); }
+.prewedding-item { border-bottom-color: rgba(184,138,42,0.15); }
+
+/* Countdown — ivory boxes, gold border, brown numbers */
+.countdown-section::before { background: var(--antique-gold); }
+.count-item { border-color: rgba(184,138,42,0.25); }
+.count-num  { color: var(--royal-brown); }
+.count-unit { color: var(--text-light); letter-spacing: 1.5px; }
+
+/* Photo slideshow frame — champagne + antique gold + ivory margin */
+.slideshow { border: 1px solid var(--champagne-gold); box-shadow: var(--shadow-md); }
+.slide-dot.active { background: var(--antique-gold); }
+
+
+/* ═══════════════════════════════════════════════════
+   BUTTONS — deep royal brown + champagne, or antique
+   gold + brown text. No pink gradients anywhere.
+═══════════════════════════════════════════════════ */
+.venue-map-btn, .send-btn {
+  background: linear-gradient(135deg, var(--royal-brown), var(--espresso));
+  color: var(--soft-gold);
+  border: 1px solid var(--antique-gold);
+}
+.venue-map-btn:hover, .send-btn:hover {
+  background: linear-gradient(135deg, var(--espresso), var(--royal-brown));
+}
+.venue-map-open-btn { color: var(--royal-brown); border-color: var(--antique-gold); }
+.congrats-close {
+  background: linear-gradient(135deg, var(--royal-brown), var(--espresso));
+  color: var(--soft-gold);
+}
+.install-btn { background: linear-gradient(135deg, var(--antique-gold), var(--gold-dark)); }
+
+/* Form focus states — gold, never pink */
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--antique-gold);
+  box-shadow: 0 0 0 3px rgba(184,138,42,0.18);
+}
+
+
+/* ═══════════════════════════════════════════════════
+   CONGRATULATIONS OVERLAY — ivory + gold, not pink
+═══════════════════════════════════════════════════ */
+.congrats-card {
+  background: linear-gradient(145deg, #ffffff, var(--warm-ivory));
+  border: 1px solid var(--antique-gold);
+  box-shadow: 0 20px 60px rgba(42,26,11,0.22), 0 0 0 1px rgba(184,138,42,0.15);
+}
+.congrats-title { color: var(--royal-brown); }
+
+
+/* ═══════════════════════════════════════════════════
+   FOOTER — espresso background, ivory type, gold accents
+═══════════════════════════════════════════════════ */
+.footer-section { background: var(--espresso); }
+.footer-wave, .footer-wave-bottom { color: var(--champagne-gold); }
+.footer-msg { color: var(--soft-gold); text-shadow: none; }
+.footer-names { color: var(--warm-ivory); }
+.creator-bar { background: var(--royal-brown); border-top: 1px solid rgba(184,138,42,0.25); }
+.creator-bar p { color: rgba(255,249,237,0.7); }
+.creator-link { color: var(--champagne-gold); }
+.toast { background: var(--royal-brown); border: 1px solid var(--antique-gold); }
+
+
+/* ═══════════════════════════════════════════════════
+   DOOR / ENVELOPE — "ROYAL PALACE GOLDEN GATE"
+   Deeper, richer gradients with more gold/espresso
+   contrast; slower cinematic shimmer; refined seam.
+═══════════════════════════════════════════════════ */
+#envelope-cover {
+  background: radial-gradient(ellipse 140% 85% at 50% 32%,
+    var(--door-c1) 0%, var(--door-c2) 32%, var(--door-c3) 64%, var(--door-c4) 100%);
+}
+.door-left, .door-right {
+  background-image:
+    linear-gradient(100deg, transparent 42%, rgba(243,222,170,0.16) 49%, rgba(243,222,170,0.16) 53%, transparent 60%),
+    radial-gradient(ellipse 140% 85% at 50% 32%, var(--door-c1) 0%, var(--door-c2) 32%, var(--door-c3) 64%, var(--door-c4) 100%);
+}
+/* Slower, more cinematic shimmer sweep than the shared default */
+.door-left { animation-duration: 9s; }
+.door-right { animation-duration: 9s; animation-delay: 2s; }
+
+/* Subtle carved grooves — thinner and further apart than the
+   shared default so they read as fine woodwork, not stripes */
+.door-left::before, .door-right::before {
+  background-image:
+    repeating-linear-gradient(90deg,
+      rgba(22,13,5,0.08) 0px, rgba(22,13,5,0.08) 1px,
+      transparent 1px, transparent 34px,
+      rgba(243,222,170,0.10) 34px, rgba(243,222,170,0.10) 35px,
+      transparent 35px, transparent 68px);
+}
+/* Elegant thin champagne seam instead of a bright line */
+.door-left::after, .door-right::after {
+  width: 2px;
+  box-shadow: 0 0 8px rgba(229,199,122,0.35);
+}
+
+/* Golden dust + star accents: warm and restrained, not flooded */
+.envelope-inner::before, .envelope-inner::after { opacity: 0.75; }
+.star-accent { color: var(--champagne-gold); }
+.corner-frame, .corner-frame::before { border-color: rgba(229,199,122,0.55); }
+
+
+/* ═══════════════════════════════════════════════════
+   TAP TO OPEN — royal wax-seal medallion, not a modern
+   spinning UI ring. Gentle breathing glow only.
+═══════════════════════════════════════════════════ */
+.tap-btn {
+  background: radial-gradient(circle at 35% 30%, #fffdf7 0%, var(--warm-ivory) 55%, var(--soft-gold) 100%);
+  border: 2px solid var(--antique-gold);
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,0.9),
+    inset 0 -6px 10px rgba(184,138,42,0.12),
+    0 0 0 6px rgba(243,222,170,0.25),
+    0 10px 30px rgba(22,13,5,0.45);
+}
+/* Replace the rotating light-chase ring with a still, elegant
+   antique-gold ring — medallion, not machinery */
+.tap-btn::before {
+  background: none; -webkit-mask: none; mask: none;
+  border: 1px solid var(--champagne-gold);
+  inset: -14px;
+  animation: none;
+  opacity: 0.7;
+}
+.tap-btn::after { border-color: var(--champagne-gold); animation-duration: 3.4s; }
+.w-letter {
+  background-image: var(--foil-gradient);
+  background-size: 200% auto;
+}
+.w-letter::after { background: linear-gradient(90deg, transparent, var(--antique-gold), transparent); }
+.tap-gem { background: linear-gradient(135deg, #fffdf7, var(--champagne-gold) 50%, #fffdf7); }
+.tap-text, .tap-text::before, .tap-text::after { color: var(--champagne-gold); }
+.tap-text::before, .tap-text::after { background: linear-gradient(90deg, transparent, var(--champagne-gold), transparent); }
+.tap-text span::before, .tap-text span::after { background: var(--champagne-gold); }
+
+
+/* ═══════════════════════════════════════════════════
+   MOBILE SAFETY — keep ornaments/foil text from causing
+   overflow on narrow screens
+═══════════════════════════════════════════════════ */
+@media (max-width: 360px) {
+  .names-person { font-size: clamp(22px, 7vw, 30px); }
+  .section-title { font-size: clamp(22px, 6.5vw, 30px); }
+}
+
+/* prefers-reduced-motion handling from the shared stylesheet
+   already covers every selector touched above — nothing here
+   needs its own additional rule. */
