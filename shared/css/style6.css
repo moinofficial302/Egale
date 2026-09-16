@@ -1595,40 +1595,381 @@ body {
   }
 }
 /* ═══════════════════════════════════════════════════
-   THEME — Midnight Royal
-   Deep navy + silver, formal and regal.
+   THEME OVERRIDE — ROYAL AMETHYST / IMPERIAL PURPLE
+   "An expensive royal Indian wedding invitation designed
+   with amethyst purple, deep plum velvet, champagne gold
+   foil and warm ivory paper."
+
+   Visual balance target: 60% warm ivory, 25% deep purple/
+   plum, 10% champagne gold, 5% lavender highlight. Gold is
+   an ACCENT (borders, dividers, seams, medallion, icons) —
+   never a flood fill. No visible pink/rose anywhere below.
+
+   This section only OVERRIDES the shared rose theme above —
+   it does not duplicate it. Load this file after style.css.
 ═══════════════════════════════════════════════════ */
+
 :root {
-  --rose:        #2c3e6b;
-  --rose-dark:   #1a2745;
-  --rose-light:  #aab8dc;
-  --blush:       #eef1f8;
-  --cream:       #f8f9fc;
+  /* ── Compatibility variables — everything in the shared
+     CSS above is written against these, so remapping them
+     re-themes the whole site without touching a shared rule ── */
+  --rose:        #5A2382;   /* Royal Purple — accents, buttons, nodes */
+  --rose-dark:   #24102F;   /* Deep Plum — hover/gradient ends */
+  --rose-light:  #D8B8EA;   /* Soft Lavender — dividers, light accents */
+  --blush:       #F3EAF8;   /* whisper of lavender — secondary backgrounds */
+  --cream:       #FFF9F1;   /* Warm Ivory — primary background */
 
-  --gold:        #9aa5c4;
-  --gold-dark:   #6b7699;
+  --gold:        #D6B56D;   /* Champagne Gold — borders, card corners */
+  --gold-dark:   #A9843E;
 
-  --text-dark:   #10162b;
-  --text-mid:    #2b3350;
-  --text-light:  #55608a;
+  --text-dark:   #21152A;
+  --text-mid:    #584663;
+  --text-light:  #76677D;
 
-  --shadow-sm: 0 2px 10px rgba(26,39,69,0.12);
-  --shadow-md: 0 8px 24px rgba(26,39,69,0.18);
-  --shadow-lg: 0 16px 44px rgba(26,39,69,0.24);
+  /* Tinted shadows (deep plum, not flat black) */
+  --shadow-sm: 0 2px 10px rgba(36,16,47,0.10);
+  --shadow-md: 0 8px 24px rgba(36,16,47,0.16);
+  --shadow-lg: 0 16px 44px rgba(36,16,47,0.22);
 
-  --door-c1: #c7cee8;
-  --door-c2: #7c88b8;
-  --door-c3: #2c3e6b;
-  --door-c4: #080b18;
-  --door-seam: #b0b8d9;
+  /* Door screen — "Royal Amethyst Palace Door": deep plum
+     edges, amethyst/royal-purple mid-tone, soft lavender at
+     the light center, champagne-gold seam */
+  --door-c1: #E8D0F5;
+  --door-c2: #5A2382;
+  --door-c3: #3B145F;
+  --door-c4: #150819;
+  --door-seam: #D6B56D;
+
+  /* Named palette (clearer names for the rules below — same
+     colors as the compatibility variables above) */
+  --deep-amethyst:  #3B145F;
+  --royal-purple:   #5A2382;
+  --deep-plum:      #24102F;
+  --soft-lavender:  #D8B8EA;
+  --champagne-gold: #D6B56D;
+  --soft-gold:      #E8D09A;
+  --warm-ivory:     #FFF9F1;
 }
 
-/* Signature touch: a subtle starfield of tiny silver dots across
-   the whole page — a classic "midnight sky" motif. */
-body {
+
+/* ═══════════════════════════════════════════════════
+   BODY — warm ivory, an extremely subtle purple texture
+   (not sparkles flooding the page)
+═══════════════════════════════════════════════════ */
+body { position: relative; }
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.4;
+  background-image: radial-gradient(rgba(90,35,130,0.05) 0.6px, transparent 0.6px);
+  background-size: 5px 5px;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   HERO — deep plum/amethyst cinematic tones, image kept
+   fully visible underneath a readable purple overlay
+═══════════════════════════════════════════════════ */
+.hero {
+  background: linear-gradient(160deg, var(--deep-plum) 0%, #170a1f 60%, #0d0512 100%);
+  box-shadow: inset 0 0 90px 20px rgba(21,8,25,0.45);
+}
+.hero-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(36,16,47,0.10) 0%,
+    rgba(59,20,95,0.32) 45%,
+    rgba(21,8,25,0.72) 100%
+  );
+}
+.hero-badge::before, .hero-badge::after { background: rgba(216,184,234,0.5); }
+.hero-amp, .hero-heart { color: var(--champagne-gold); }
+/* Names stay white/ivory over the photo for readability, with
+   a soft champagne glow rather than a solid gold fill */
+.hero-name span, #hero-groom-name, #hero-bride-name {
+  text-shadow: 0 2px 18px rgba(214,181,109,0.35), 0 2px 6px rgba(0,0,0,0.4);
+}
+
+
+/* ═══════════════════════════════════════════════════
+   NAMES SECTION — solid, richly-legible amethyst text.
+   (A gradient/foil text-clip effect looks patchy on names
+   that wrap to two lines, so a deep solid color + soft
+   shadow is used instead — reliable at every width.)
+═══════════════════════════════════════════════════ */
+.names-person {
+  color: var(--deep-amethyst);
+  text-shadow: 0 1px 2px rgba(214,181,109,0.18);
+}
+.names-ampersand { color: var(--champagne-gold); }
+.names-ampersand::after {
+  content: '❦';
+  display: block;
+  font-size: 13px;
+  color: var(--soft-lavender);
+  margin-top: 2px;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   SECTION HEADINGS + DIVIDERS + ICONS
+═══════════════════════════════════════════════════ */
+.section-title {
+  color: var(--deep-amethyst);
+  letter-spacing: 1px;
+  text-shadow: 0 1px 2px rgba(214,181,109,0.12);
+}
+.divider span::before { content: '❦ '; }
+.divider span::after  { content: ' ❦'; }
+.section-icon { border-color: var(--champagne-gold); color: var(--royal-purple); background: var(--warm-ivory); }
+
+
+/* ═══════════════════════════════════════════════════
+   SCROLL HINT — deep purple + gold, calm not bouncy
+═══════════════════════════════════════════════════ */
+.scroll-hint { animation-duration: 3s; }
+
+
+/* ═══════════════════════════════════════════════════
+   INVITATION TEXT / WAVE DECOR
+═══════════════════════════════════════════════════ */
+.invite-text p { color: var(--text-mid); }
+.wave-decor { color: var(--soft-lavender); }
+
+
+/* ═══════════════════════════════════════════════════
+   SCRATCH CARD — remove leftover hardcoded pink shadows
+═══════════════════════════════════════════════════ */
+.scratch-title    { text-shadow: 0 1px 3px rgba(36,16,47,0.16); }
+.scratch-wrapper  { box-shadow: 0 10px 30px rgba(36,16,47,0.28); }
+.scratch-revealed { border-color: rgba(214,181,109,0.20); }
+.date-sub { color: var(--gold-dark); }
+
+
+/* ═══════════════════════════════════════════════════
+   CARDS — printed wedding-stationery feel
+═══════════════════════════════════════════════════ */
+.card {
+  border-radius: 14px;
+  border: 1px solid var(--champagne-gold);
+  box-shadow: var(--shadow-sm);
+  background:
+    radial-gradient(ellipse at top left, rgba(90,35,130,0.05), transparent 60%),
+    var(--warm-ivory);
+}
+.card::before, .card::after {
+  border-color: var(--royal-purple);
+  width: 16px; height: 16px;
+  border-width: 1.5px;
+}
+.card-icon { border-color: var(--champagne-gold); }
+
+/* Timeline — champagne line, royal-purple + gold nodes */
+.tl-dot { background: var(--royal-purple); box-shadow: 0 0 0 4px rgba(214,181,109,0.25); }
+.timeline-item { border-bottom-color: rgba(214,181,109,0.18); }
+.prewedding-item { border-bottom-color: rgba(214,181,109,0.18); }
+
+/* Countdown — ivory boxes with a gold border, NOT a solid
+   fill: .count-item inherits --rose-light as its background
+   in the shared CSS, and --rose-light here is soft lavender,
+   so it must be re-pointed to ivory explicitly or every box
+   reads as one solid lavender block. */
+.count-item {
+  background: var(--warm-ivory);
+  border: 1px solid var(--champagne-gold);
+  box-shadow: var(--shadow-sm);
+}
+.count-num  { color: var(--deep-amethyst); }
+.count-unit { color: var(--text-light); letter-spacing: 1.5px; }
+
+/* Photo slideshow — the shared frame is a LAYERED box-shadow
+   (ivory ring + gold ring + tint ring + soft shadow), not a
+   plain border. Re-declaring the whole stack in the new
+   palette keeps the frame AND the breathing-room gap intact —
+   overriding it with a single shadow would erase both. */
+.slideshow {
+  border: none;
+  box-shadow:
+    0 0 0 8px  var(--warm-ivory),
+    0 0 0 10px var(--champagne-gold),
+    0 0 0 11px rgba(36,16,47,0.25),
+    0 16px 36px rgba(36,16,47,0.28);
+}
+.slide-overlay { background: linear-gradient(to top, rgba(36,16,47,0.35) 0%, transparent 60%); }
+.slide-dot.active { background: var(--champagne-gold); }
+
+
+/* ═══════════════════════════════════════════════════
+   BUTTONS — deep plum/royal purple, champagne text or
+   border. No pink gradients anywhere.
+═══════════════════════════════════════════════════ */
+.venue-map-btn, .send-btn {
+  background: linear-gradient(135deg, var(--deep-plum), var(--royal-purple));
+  color: var(--warm-ivory);
+  border: 1px solid var(--champagne-gold);
+  box-shadow: var(--shadow-sm);
+}
+.venue-map-btn:hover, .send-btn:hover {
+  background: linear-gradient(135deg, var(--royal-purple), var(--deep-plum));
+  box-shadow: 0 4px 18px rgba(214,181,109,0.25);
+}
+.venue-map-btn:active, .send-btn:active {
+  box-shadow: 0 2px 8px rgba(36,16,47,0.3);
+}
+.venue-map-open-btn { color: var(--deep-plum); border-color: var(--champagne-gold); }
+.install-btn { background: linear-gradient(135deg, var(--champagne-gold), var(--gold-dark)); }
+
+/* Form fields — gold-tinted border at rest, purple + gold glow
+   on focus. Only the focus state was pink before; the resting
+   border was too. */
+.form-input, .form-select, .form-textarea {
+  border-color: rgba(214,181,109,0.35);
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--royal-purple);
+  box-shadow: 0 0 0 3px rgba(214,181,109,0.20);
+}
+.form-label { color: var(--deep-plum); }
+
+/* Music toggle — small premium floating control instead of
+   a generic white circle */
+.music-toggle {
+  background: var(--deep-plum);
+  border: 1.5px solid var(--champagne-gold);
+  color: var(--warm-ivory);
+  box-shadow: var(--shadow-sm);
+}
+
+
+/* ═══════════════════════════════════════════════════
+   CONGRATULATIONS OVERLAY — ivory + gold + purple, not pink
+═══════════════════════════════════════════════════ */
+.congrats-card {
+  background: linear-gradient(145deg, #ffffff, var(--warm-ivory));
+  border: 1px solid var(--champagne-gold);
+  box-shadow: 0 20px 60px rgba(36,16,47,0.22), 0 0 0 1px rgba(214,181,109,0.15);
+}
+.congrats-title { color: var(--deep-amethyst); }
+.congrats-close {
+  background: linear-gradient(135deg, var(--deep-plum), var(--royal-purple));
+  color: var(--warm-ivory);
+}
+
+
+/* ═══════════════════════════════════════════════════
+   FOOTER — deep plum background, ivory type, gold accents
+═══════════════════════════════════════════════════ */
+.footer-section { background: var(--deep-plum); }
+.footer-wave, .footer-wave-bottom { color: var(--champagne-gold); }
+.footer-msg   { color: var(--soft-gold); text-shadow: none; }
+.footer-names { color: var(--warm-ivory); }
+.creator-bar   { background: var(--blush); border-top: 1px solid rgba(214,181,109,0.35); }
+.creator-bar p { color: var(--text-light); }
+.creator-link  { color: var(--royal-purple); }
+.toast {
+  background: var(--deep-plum);
+  color: var(--warm-ivory);
+  border: 1px solid var(--champagne-gold);
+}
+
+
+/* ═══════════════════════════════════════════════════
+   DOOR / ENVELOPE — "ROYAL AMETHYST PALACE DOOR"
+   Deep plum shadow, amethyst/royal-purple body, soft
+   lavender + champagne-gold light — cinematic, not flat.
+═══════════════════════════════════════════════════ */
+#envelope-cover {
+  background: radial-gradient(ellipse 140% 85% at 50% 32%,
+    var(--door-c1) 0%, var(--door-c2) 32%, var(--door-c3) 64%, var(--door-c4) 100%);
+}
+.door-left, .door-right {
   background-image:
-    radial-gradient(rgba(255,255,255,0.9) 1px, transparent 1px),
-    radial-gradient(rgba(170,184,220,0.6) 1px, transparent 1px);
-  background-size: 140px 140px, 90px 90px;
-  background-position: 0 0, 45px 60px;
+    linear-gradient(100deg, transparent 42%, rgba(232,208,245,0.18) 49%, rgba(232,208,245,0.18) 53%, transparent 60%),
+    radial-gradient(ellipse 140% 85% at 50% 32%, var(--door-c1) 0%, var(--door-c2) 32%, var(--door-c3) 64%, var(--door-c4) 100%);
 }
+/* Slow, cinematic shimmer sweep rather than a fast flash */
+.door-left { animation-duration: 9s; }
+.door-right { animation-duration: 9s; animation-delay: 2s; }
+
+/* Subtle carved/fluted grooves — fine woodwork, not stripes */
+.door-left::before, .door-right::before {
+  background-image:
+    repeating-linear-gradient(90deg,
+      rgba(21,8,25,0.10) 0px, rgba(21,8,25,0.10) 1px,
+      transparent 1px, transparent 34px,
+      rgba(232,208,245,0.10) 34px, rgba(232,208,245,0.10) 35px,
+      transparent 35px, transparent 68px);
+}
+/* Elegant champagne-gold center seam */
+.door-left::after, .door-right::after {
+  width: 2px;
+  box-shadow: 0 0 8px rgba(214,181,109,0.4);
+}
+
+/* Light beam — champagne-gold + lavender bloom instead of a
+   plain white/warm beam, as if light is coming from behind
+   the doors */
+.light-beam {
+  background: linear-gradient(to bottom,
+    transparent 0%, rgba(216,184,234,0.22) 12%, rgba(230,205,150,0.34) 50%,
+    rgba(216,184,234,0.22) 88%, transparent 100%);
+  animation: beamPulse 6s ease-in-out infinite;
+}
+
+/* Golden dust + star accents — elegant, not a glitter burst */
+.envelope-inner::before, .envelope-inner::after { opacity: 0.7; }
+.star-accent { color: var(--champagne-gold); }
+.corner-frame, .corner-frame::before { border-color: rgba(214,181,109,0.55); }
+
+
+/* ═══════════════════════════════════════════════════
+   TAP TO OPEN — Royal Amethyst medallion: deep purple
+   center, champagne-gold frame, gentle breathing only
+   (no spinning modern UI ring)
+═══════════════════════════════════════════════════ */
+.tap-btn {
+  background: radial-gradient(circle at 35% 30%, #fbf6ff 0%, var(--warm-ivory) 55%, var(--soft-lavender) 100%);
+  border: 2px solid var(--champagne-gold);
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,0.9),
+    inset 0 -6px 10px rgba(90,35,130,0.12),
+    0 0 0 6px rgba(232,208,245,0.30),
+    0 10px 30px rgba(21,8,25,0.45);
+}
+/* A single still, elegant gold ring instead of a rotating
+   "tech UI" chase-ring */
+.tap-btn::before {
+  background: none; -webkit-mask: none; mask: none;
+  border: 1px solid var(--champagne-gold);
+  inset: -14px;
+  animation: none;
+  opacity: 0.75;
+}
+.tap-btn::after { border-color: var(--soft-lavender); animation-duration: 3.6s; }
+.w-letter {
+  background-image: linear-gradient(135deg, #8A6A2E 0%, var(--champagne-gold) 30%, #FCEFC7 48%, #A9843E 65%, var(--soft-gold) 82%, #8A6A2E 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent; -webkit-text-fill-color: transparent;
+}
+.w-letter::after { background: linear-gradient(90deg, transparent, var(--champagne-gold), transparent); }
+.tap-gem { background: linear-gradient(135deg, #fbf6ff, var(--champagne-gold) 50%, #fbf6ff); }
+.tap-text, .tap-text::before, .tap-text::after { color: var(--champagne-gold); }
+.tap-text::before, .tap-text::after { background: linear-gradient(90deg, transparent, var(--champagne-gold), transparent); }
+.tap-text span::before, .tap-text span::after { background: var(--champagne-gold); }
+
+
+/* ═══════════════════════════════════════════════════
+   MOBILE SAFETY — keep ornaments/typography from causing
+   overflow on narrow screens
+═══════════════════════════════════════════════════ */
+@media (max-width: 360px) {
+  .names-person { font-size: clamp(22px, 7vw, 30px); }
+  .section-title { font-size: clamp(22px, 6.5vw, 30px); }
+}
+
+/* prefers-reduced-motion handling already in the shared
+   stylesheet covers every selector touched above — no
+   additional rule needed here. */
