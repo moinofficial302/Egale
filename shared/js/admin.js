@@ -18,32 +18,18 @@ function friendlyAuthError(code) {
   }
 }
 
-/* Guard for dashboard.html: redirect to login if not authenticated,
-   AND verify this logged-in user actually owns THIS wedding (WEDDING_SLUG).
-   Calls onReady(user) only once both checks pass. */
+/* Guard for dashboard.html: redirect to login if not authenticated.
+   There is no per-wedding ownership check anymore — this is a single
+   shared admin panel, so any account that can sign in at all is
+   trusted with every wedding (accounts are only ever created by you,
+   via the Firebase Console). */
 function requireAuth(onReady) {
   firebase.auth().onAuthStateChanged(user => {
     if (!user) {
       window.location.href = 'login.html';
       return;
     }
-    // Check that this user's uid matches the ownerUid stored on
-    // weddings/{WEDDING_SLUG} — this is what stops customer A's
-    // login from opening customer B's dashboard.
-    db.collection('weddings').doc(WEDDING_SLUG).get().then(doc => {
-      const ownerUid = doc.exists ? doc.data().ownerUid : null;
-      if (ownerUid && ownerUid === user.uid) {
-        onReady(user);
-      } else {
-        firebase.auth().signOut().finally(() => {
-          window.location.href = 'login.html?err=unauthorized';
-        });
-      }
-    }).catch(() => {
-      firebase.auth().signOut().finally(() => {
-        window.location.href = 'login.html?err=unauthorized';
-      });
-    });
+    onReady(user);
   });
 }
 
@@ -53,19 +39,11 @@ function logout() {
   });
 }
 
-'use strict';
-
 /* ═══════════════════════════════
    ADMIN PWA INSTALL
-   Registers the site's service worker (its scope already covers
-   /admin/ since it's a sub-path) and wires up the visible
-   "Install App" button using the beforeinstallprompt event.
 ═══════════════════════════════ */
-
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    // '../sw.js' -> registered scope defaults to its own folder (site root),
-    // which covers /admin/ too since it's a sub-path.
     navigator.serviceWorker.register('../../sw.js')
       .then(reg => console.log('[Admin] Service worker registered:', reg.scope))
       .catch(err => console.warn('[Admin] Service worker registration failed:', err));
@@ -94,23 +72,141 @@ window.addEventListener('appinstalled', () => {
   deferredAdminInstallPrompt = null;
 });
 
+
 /* ═══════════════════════════════════════════════════
    DASHBOARD LOGIC (only auto-runs on dashboard.html —
-   see the guard at the top of this section)
+   guarded via the dashboard-only #wedding-list element,
+   which is what makes it safe to also load on login.html)
 ═══════════════════════════════════════════════════ */
-'use strict';
 
 let allRsvps = [];
 let currentFilter = 'all';
+let currentWeddingId = null;   // which wedding is currently open for editing
+let rsvpUnsubscribe = null;    // the active Firestore listener, so it can be
+                                // stopped when switching to a different wedding
 
-// Only auto-run the dashboard init when we're actually ON the dashboard
-// page (checked via a dashboard-only element). This guard is what makes
-// it safe for this file to also be loaded on login.html.
-if (document.getElementById('rsvp-list')) {
+if (document.getElementById('wedding-list')) {
   requireAuth(() => {
-    listenToRsvps();
-    loadContentIntoEditor();
+    loadWeddingList();
   });
+}
+
+/* ═══════════════════════════════
+   WEDDING LIST (the new home screen)
+═══════════════════════════════ */
+function loadWeddingList() {
+  const listEl = document.getElementById('wedding-list');
+  listEl.innerHTML = '<div class="spinner"></div>';
+
+  db.collection('weddings').get()
+    .then(snapshot => {
+      if (snapshot.empty) {
+        listEl.innerHTML = `<div class="empty-state"><span class="emoji">💍</span>No weddings yet — add one above.</div>`;
+        return;
+      }
+
+      const weddings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      // Most recently updated first, so active work stays at the top
+      weddings.sort((a, b) => {
+        const at = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : 0;
+        const bt = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : 0;
+        return bt - at;
+      });
+
+      listEl.innerHTML = weddings.map(w => {
+        const c = w.coupleNames || {};
+        const names = (c.groomName || c.brideName)
+          ? `${escapeHTML(c.groomName || '?')} &amp; ${escapeHTML(c.brideName || '?')}`
+          : '(names not set yet)';
+        const dateLabel = w.weddingDateISO ? formatDateShort(w.weddingDateISO) : 'Date not set';
+        return `
+          <div class="rsvp-card" style="cursor:pointer;" onclick='selectWedding(${JSON.stringify(w.id)})'>
+            <div class="rsvp-top">
+              <div>
+                <div class="rsvp-name">${names}</div>
+                <span class="rsvp-phone" style="text-decoration:none;">/${escapeHTML(w.id)}/</span>
+              </div>
+              <span class="rsvp-badge yes">${dateLabel}</span>
+            </div>
+          </div>`;
+      }).join('');
+    })
+    .catch(err => {
+      console.error('[Admin] Failed to load wedding list:', err);
+      listEl.innerHTML = `<div class="empty-state"><span class="emoji">⚠️</span>Could not load weddings. Check your connection.</div>`;
+    });
+}
+
+function formatDateShort(iso) {
+  const d = new Date(iso);
+  if (isNaN(d)) return '';
+  return d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function createNewWedding() {
+  const idInput    = document.getElementById('new-wedding-id');
+  const groomInput = document.getElementById('new-groom-name');
+  const brideInput = document.getElementById('new-bride-name');
+  const status     = document.getElementById('create-wedding-status');
+  const btn        = document.getElementById('create-wedding-btn');
+
+  const id = idInput.value.trim().toLowerCase();
+  status.style.color = 'var(--no)';
+
+  if (!id) { status.textContent = 'Enter a Wedding ID (the folder name).'; return; }
+  if (!/^[a-z0-9-]+$/.test(id)) { status.textContent = 'Use only lowercase letters, numbers and hyphens.'; return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Creating...';
+  status.textContent = '';
+
+  const docRef = db.collection('weddings').doc(id);
+  docRef.get().then(existing => {
+    if (existing.exists) {
+      status.style.color = 'var(--no)';
+      status.textContent = `"${id}" already exists — pick it from the list below instead.`;
+      btn.disabled = false;
+      btn.textContent = 'Create Wedding';
+      return;
+    }
+
+    return docRef.set({
+      coupleNames: {
+        groomName: groomInput.value.trim(),
+        brideName: brideInput.value.trim()
+      },
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+      status.style.color = 'var(--ok)';
+      status.textContent = `✓ "${id}" created — opening it now.`;
+      idInput.value = ''; groomInput.value = ''; brideInput.value = '';
+      selectWedding(id);
+    });
+  }).catch(err => {
+    status.style.color = 'var(--no)';
+    status.textContent = '✗ Could not create: ' + err.message;
+  }).finally(() => {
+    btn.disabled = false;
+    btn.textContent = 'Create Wedding';
+  });
+}
+
+function selectWedding(id) {
+  currentWeddingId = id;
+  document.getElementById('editing-wedding-label').textContent = `Editing: /${id}/`;
+  document.getElementById('wedding-list-view').style.display = 'none';
+  document.getElementById('wedding-edit-view').style.display = 'block';
+  switchTab('messages');
+  listenToRsvps();
+  loadContentIntoEditor();
+}
+
+function backToList() {
+  if (rsvpUnsubscribe) { rsvpUnsubscribe(); rsvpUnsubscribe = null; }
+  currentWeddingId = null;
+  document.getElementById('wedding-edit-view').style.display = 'none';
+  document.getElementById('wedding-list-view').style.display = 'block';
+  loadWeddingList(); // refresh in case anything changed
 }
 
 /* ═══════════════════════════════
@@ -123,10 +219,11 @@ function switchTab(tab) {
 }
 
 /* ═══════════════════════════════
-   MESSAGES TAB
+   MESSAGES TAB (scoped to currentWeddingId)
 ═══════════════════════════════ */
 function listenToRsvps() {
-  db.collection('weddings').doc(WEDDING_SLUG).collection('rsvps').orderBy('sentAt', 'desc')
+  if (rsvpUnsubscribe) { rsvpUnsubscribe(); rsvpUnsubscribe = null; }
+  rsvpUnsubscribe = db.collection('weddings').doc(currentWeddingId).collection('rsvps').orderBy('sentAt', 'desc')
     .onSnapshot(snapshot => {
       allRsvps = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       renderSummary();
@@ -187,7 +284,7 @@ function renderRsvpList() {
 
 function deleteRsvp(id) {
   if (!confirm('Delete this message? This can\'t be undone.')) return;
-  db.collection('weddings').doc(WEDDING_SLUG).collection('rsvps').doc(id).delete()
+  db.collection('weddings').doc(currentWeddingId).collection('rsvps').doc(id).delete()
     .catch(err => alert('Could not delete: ' + err.message));
 }
 
@@ -205,45 +302,39 @@ function escapeHTML(str) {
 }
 
 /* ═══════════════════════════════
-   EDIT CONTENT TAB
+   EDIT CONTENT TAB (scoped to currentWeddingId)
 ═══════════════════════════════ */
 function loadContentIntoEditor() {
-  db.collection('weddings').doc(WEDDING_SLUG).get()
+  // Clear any repeatable rows left over from the previously-open wedding
+  document.getElementById('timeline-editor').innerHTML = '';
+  document.getElementById('prewedding-editor').innerHTML = '';
+
+  db.collection('weddings').doc(currentWeddingId).get()
     .then(doc => {
       const data = doc.exists ? doc.data() : {};
       const c = data.coupleNames || {};
 
-      document.getElementById('c-groom-name').value      = c.groomName || 'Malhar';
-      document.getElementById('c-bride-name').value       = c.brideName || 'Jui';
-      document.getElementById('c-groom-fullname').value   = c.groomFullName || 'Malhar Surangalikar';
-      document.getElementById('c-bride-fullname').value   = c.brideFullName || 'Jui Dixit';
-      document.getElementById('c-groom-parent').value     = c.groomParent || 'S/o Mr. Ramesh Kumar';
-      document.getElementById('c-bride-parent').value     = c.brideParent || 'D/o Mr. Suresh Sharma';
+      document.getElementById('c-groom-name').value      = c.groomName || '';
+      document.getElementById('c-bride-name').value       = c.brideName || '';
+      document.getElementById('c-groom-fullname').value   = c.groomFullName || '';
+      document.getElementById('c-bride-fullname').value   = c.brideFullName || '';
+      document.getElementById('c-groom-parent').value     = c.groomParent || '';
+      document.getElementById('c-bride-parent').value     = c.brideParent || '';
 
-      document.getElementById('c-wedding-date').value = toDatetimeLocal(data.weddingDateISO || '2026-06-15T17:00:00+05:30');
+      document.getElementById('c-wedding-date').value = data.weddingDateISO ? toDatetimeLocal(data.weddingDateISO) : '';
 
       const venue = data.venue || {};
-      document.getElementById('c-venue-name').value = venue.name || 'The Grand Palace';
-      document.getElementById('c-venue-addr').value = venue.address || '123 Royal Avenue, London';
+      document.getElementById('c-venue-name').value = venue.name || '';
+      document.getElementById('c-venue-addr').value = venue.address || '';
 
-      const timeline = (data.timeline && data.timeline.length) ? data.timeline : [
-        { title: 'Guest Arrival', time: '15 Jun 2026 · 4:00 PM' },
-        { title: 'Wedding Ceremony', time: '15 Jun 2026 · 5:00 PM' },
-        { title: 'Cocktail Hour', time: '15 Jun 2026 · 6:30 PM' },
-        { title: 'Dinner Reception', time: '15 Jun 2026 · 7:30 PM' }
-      ];
+      const timeline = data.timeline || [];
       timeline.forEach(item => addTimelineRow(item.title, item.time));
 
-      const preWedding = (data.preWeddingEvents && data.preWeddingEvents.length) ? data.preWeddingEvents : [
-        { name: 'Mehendi', detail: "13 Jun 2026 · 3:00 PM at Bride's Home" },
-        { name: 'Haldi', detail: "14 Jun 2026 · 10:00 AM at Groom's Home" },
-        { name: 'Sangeet', detail: '14 Jun 2026 · 7:00 PM at Grand Palace Hall' }
-      ];
+      const preWedding = data.preWeddingEvents || [];
       preWedding.forEach(item => addPreweddingRow(item.name, item.detail));
 
-      document.getElementById('c-invitation-text').value = data.invitationText ||
-        "With hearts full of love and joy, we warmly invite you to share in the celebration of our union. Your presence would mean the world to us as we begin this beautiful journey together.";
-      document.getElementById('c-footer-message').value = data.footerMessage || "We can't wait to celebrate with you!";
+      document.getElementById('c-invitation-text').value = data.invitationText || '';
+      document.getElementById('c-footer-message').value = data.footerMessage || '';
 
       initLivePreviews();
     })
@@ -304,8 +395,6 @@ function escapeAttr(str) {
 
 /* ═══════════════════════════════
    LIVE PREVIEWS
-   Mirrors exactly what the real site does with this data, so editing
-   a field shows its effect immediately — no guessing what will change.
 ═══════════════════════════════ */
 function initLivePreviews() {
   const bind = (id, cb) => {
@@ -315,18 +404,18 @@ function initLivePreviews() {
 
   function updateHeroPreview() {
     document.getElementById('prev-hero-groom').textContent =
-      document.getElementById('c-groom-name').value.trim() || 'Malhar';
+      document.getElementById('c-groom-name').value.trim() || '—';
     document.getElementById('prev-hero-bride').textContent =
-      document.getElementById('c-bride-name').value.trim() || 'Jui';
+      document.getElementById('c-bride-name').value.trim() || '—';
   }
 
   function updateNamesPreview() {
     document.getElementById('prev-groom-fullname').textContent =
-      document.getElementById('c-groom-fullname').value.trim() || 'Malhar Surangalikar';
+      document.getElementById('c-groom-fullname').value.trim() || '—';
     document.getElementById('prev-groom-parent').textContent =
       document.getElementById('c-groom-parent').value.trim();
     document.getElementById('prev-bride-fullname').textContent =
-      document.getElementById('c-bride-fullname').value.trim() || 'Jui Dixit';
+      document.getElementById('c-bride-fullname').value.trim() || '—';
     document.getElementById('prev-bride-parent').textContent =
       document.getElementById('c-bride-parent').value.trim();
   }
@@ -345,7 +434,7 @@ function initLivePreviews() {
 
   function updateVenuePreview() {
     document.getElementById('prev-venue-name').textContent =
-      document.getElementById('c-venue-name').value.trim() || 'The Grand Palace';
+      document.getElementById('c-venue-name').value.trim() || '—';
     document.getElementById('prev-venue-addr').textContent =
       document.getElementById('c-venue-addr').value.trim();
   }
@@ -373,7 +462,6 @@ function initLivePreviews() {
   const preweddingEditor = document.getElementById('prewedding-editor');
   if (preweddingEditor) preweddingEditor.addEventListener('input', renderPreweddingPreview);
 
-  // Sync previews once with whatever values just got loaded
   updateHeroPreview();
   updateNamesPreview();
   updateDatePreview();
@@ -429,7 +517,7 @@ function renderPreweddingPreview() {
   }).join('');
 }
 
-/* ── Save everything to Firestore ── */
+/* ── Save everything to Firestore (scoped to currentWeddingId) ── */
 function saveContent() {
   const btn    = document.getElementById('save-btn');
   const status = document.getElementById('save-status');
@@ -474,7 +562,7 @@ function saveContent() {
   status.textContent = '';
   status.style.color = 'var(--ok)';
 
-  db.collection('weddings').doc(WEDDING_SLUG).set(data, { merge: true })
+  db.collection('weddings').doc(currentWeddingId).set(data, { merge: true })
     .then(() => {
       status.textContent = '✓ Saved — the site now reflects these changes.';
     })
