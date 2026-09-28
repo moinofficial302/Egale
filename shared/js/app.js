@@ -8,7 +8,7 @@
    4. Countdown Timer
    5. Scratch Card
    6. Photo Slideshow
-   7. Contact Form + Toast (Firestore)
+   7. Contact Form → WhatsApp + Toast
    8. WhatsApp / Creator Link
    8b. Background Music
    9. Site Content (Firestore)
@@ -24,7 +24,7 @@ if ('serviceWorker' in navigator) {
     // Relative path (not '/sw.js') so this also works when the site is
     // hosted in a sub-folder, e.g. GitHub Pages project sites:
     // https://username.github.io/repo-name/
-    navigator.serviceWorker.register('../sw.js')
+    navigator.serviceWorker.register('/sw.js', { scope: '/' })
       .then(reg => console.log('[App] Service worker registered:', reg.scope))
       .catch(err => console.warn('[App] Service worker registration failed:', err));
   });
@@ -466,14 +466,19 @@ function startSlideshow() {
 }
 
 /* ═══════════════════════════════
-   7. CONTACT FORM + TOAST (Firestore)
+   7. CONTACT FORM → WHATSAPP + TOAST
+   Guests' messages no longer go to the database. Instead the form
+   opens WhatsApp with the whole message pre-filled, addressed
+   straight to the couple's own number (set per wedding from the
+   admin panel and loaded into coupleWhatsappNumber below).
 ═══════════════════════════════ */
+let coupleWhatsappNumber = '';
+
 function sendMessage() {
   const nameEl   = document.getElementById('msg-name');
   const phoneEl  = document.getElementById('msg-phone');
   const attendEl = document.getElementById('msg-attend');
   const textEl   = document.getElementById('msg-text');
-  const btn      = document.querySelector('.send-btn');
 
   [nameEl, phoneEl, attendEl, textEl].forEach(el => el.classList.remove('error'));
 
@@ -487,33 +492,29 @@ function sendMessage() {
 
   if (!valid) return;
 
-  const rsvp = {
-    name: nameEl.value.trim(),
-    phone: phoneEl.value.trim(),
-    attending: attendEl.value,
-    message: textEl.value.trim(),
-    sentAt: firebase.firestore.FieldValue.serverTimestamp()
-  };
+  // wa.me needs digits only (country code + number, no +, spaces or dashes)
+  const target = (coupleWhatsappNumber || '').replace(/\D/g, '');
+  if (!target) {
+    showToast('✗ WhatsApp number not set for this invitation yet');
+    return;
+  }
 
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
+  const attendLabel = { yes: "I'll be there", no: "Can't make it", maybe: 'Maybe' };
 
-  db.collection('weddings').doc(WEDDING_SLUG).collection('rsvps').add(rsvp)
-    .then(() => {
-      showToast('✓ Message sent!');
-      nameEl.value = '';
-      phoneEl.value = '';
-      attendEl.value = '';
-      textEl.value = '';
-    })
-    .catch(err => {
-      console.error('[App] Could not save RSVP:', err);
-      showToast('✗ Could not send — check your connection');
-    })
-    .finally(() => {
-      btn.disabled = false;
-      btn.textContent = 'Send Message';
-    });
+  const message =
+    `*New message from your wedding invitation* 💌\n\n` +
+    `*Name:* ${nameEl.value.trim()}\n` +
+    `*Phone:* ${phoneEl.value.trim()}\n` +
+    `*Attending:* ${attendLabel[attendEl.value] || attendEl.value}\n\n` +
+    `*Message:*\n${textEl.value.trim()}`;
+
+  window.open(`https://wa.me/${target}?text=${encodeURIComponent(message)}`, '_blank');
+
+  showToast('✓ Opening WhatsApp — tap Send to deliver your message');
+  nameEl.value = '';
+  phoneEl.value = '';
+  attendEl.value = '';
+  textEl.value = '';
 }
 
 function showToast(message) {
@@ -528,7 +529,7 @@ function showToast(message) {
       landing page (index.html at domain root)
 ═══════════════════════════════ */
 function openWhatsApp() {
-  window.location.href = '../index.html';
+  window.location.href = '/index.html';
 }
 
 /* ═══════════════════════════════
@@ -657,6 +658,9 @@ function applySiteContent(data) {
   // Invitation + footer text
   setText('invitation-text', data.invitationText);
   setText('footer-message', data.footerMessage);
+
+  // Where guests' messages get delivered (WhatsApp number, set by admin)
+  if (data.whatsappNumber) coupleWhatsappNumber = data.whatsappNumber;
 }
 
 function escapeHTML(str) {
