@@ -79,11 +79,7 @@ window.addEventListener('appinstalled', () => {
    which is what makes it safe to also load on login.html)
 ═══════════════════════════════════════════════════ */
 
-let allRsvps = [];
-let currentFilter = 'all';
 let currentWeddingId = null;   // which wedding is currently open for editing
-let rsvpUnsubscribe = null;    // the active Firestore listener, so it can be
-                                // stopped when switching to a different wedding
 
 if (document.getElementById('wedding-list')) {
   requireAuth(() => {
@@ -196,103 +192,14 @@ function selectWedding(id) {
   document.getElementById('editing-wedding-label').textContent = `Editing: /${id}/`;
   document.getElementById('wedding-list-view').style.display = 'none';
   document.getElementById('wedding-edit-view').style.display = 'block';
-  switchTab('messages');
-  listenToRsvps();
   loadContentIntoEditor();
 }
 
 function backToList() {
-  if (rsvpUnsubscribe) { rsvpUnsubscribe(); rsvpUnsubscribe = null; }
   currentWeddingId = null;
   document.getElementById('wedding-edit-view').style.display = 'none';
   document.getElementById('wedding-list-view').style.display = 'block';
   loadWeddingList(); // refresh in case anything changed
-}
-
-/* ═══════════════════════════════
-   TABS
-═══════════════════════════════ */
-function switchTab(tab) {
-  document.querySelectorAll('.dash-tab').forEach(el => el.classList.toggle('active', el.dataset.tab === tab));
-  document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
-}
-
-/* ═══════════════════════════════
-   MESSAGES TAB (scoped to currentWeddingId)
-═══════════════════════════════ */
-function listenToRsvps() {
-  if (rsvpUnsubscribe) { rsvpUnsubscribe(); rsvpUnsubscribe = null; }
-  rsvpUnsubscribe = db.collection('weddings').doc(currentWeddingId).collection('rsvps').orderBy('sentAt', 'desc')
-    .onSnapshot(snapshot => {
-      allRsvps = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      renderSummary();
-      renderRsvpList();
-    }, err => {
-      console.error('[Admin] Failed to load RSVPs:', err);
-      document.getElementById('rsvp-list').innerHTML =
-        `<div class="empty-state"><span class="emoji">⚠️</span>Could not load messages. Check your connection.</div>`;
-    });
-}
-
-function renderSummary() {
-  const total = allRsvps.length;
-  const yes   = allRsvps.filter(r => r.attending === 'yes').length;
-  const no    = allRsvps.filter(r => r.attending === 'no').length;
-  const maybe = allRsvps.filter(r => r.attending === 'maybe').length;
-
-  document.getElementById('sum-total').textContent = total;
-  document.getElementById('sum-yes').textContent   = yes;
-  document.getElementById('sum-no').textContent    = no;
-  document.getElementById('sum-maybe').textContent = maybe;
-}
-
-function setFilter(filter) {
-  currentFilter = filter;
-  document.querySelectorAll('.filter-chip').forEach(el => el.classList.toggle('active', el.dataset.filter === filter));
-  renderRsvpList();
-}
-
-function renderRsvpList() {
-  const list = document.getElementById('rsvp-list');
-  const filtered = currentFilter === 'all' ? allRsvps : allRsvps.filter(r => r.attending === currentFilter);
-
-  if (!filtered.length) {
-    list.innerHTML = `<div class="empty-state"><span class="emoji">📭</span>No messages here yet.</div>`;
-    return;
-  }
-
-  const statusLabel = { yes: "I'll be there", no: "Can't make it", maybe: 'Maybe' };
-
-  list.innerHTML = filtered.map(r => `
-    <div class="rsvp-card">
-      <div class="rsvp-top">
-        <div>
-          <div class="rsvp-name">${escapeHTML(r.name)}</div>
-          <a class="rsvp-phone" href="tel:${escapeHTML(r.phone)}">${escapeHTML(r.phone)}</a>
-        </div>
-        <span class="rsvp-badge ${r.attending}">${statusLabel[r.attending] || r.attending}</span>
-      </div>
-      <p class="rsvp-message">${escapeHTML(r.message)}</p>
-      <div class="rsvp-bottom">
-        <span class="rsvp-time">${formatTimestamp(r.sentAt)}</span>
-        <button class="btn-danger" onclick="deleteRsvp('${r.id}')">Delete</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function deleteRsvp(id) {
-  if (!confirm('Delete this message? This can\'t be undone.')) return;
-  db.collection('weddings').doc(currentWeddingId).collection('rsvps').doc(id).delete()
-    .catch(err => alert('Could not delete: ' + err.message));
-}
-
-function formatTimestamp(ts) {
-  if (!ts || !ts.toDate) return '';
-  return ts.toDate().toLocaleString('en-US', {
-    day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit'
-  });
 }
 
 function escapeHTML(str) {
@@ -320,6 +227,8 @@ function loadContentIntoEditor() {
       document.getElementById('c-bride-fullname').value   = c.brideFullName || '';
       document.getElementById('c-groom-parent').value     = c.groomParent || '';
       document.getElementById('c-bride-parent').value     = c.brideParent || '';
+
+      document.getElementById('c-whatsapp').value = data.whatsappNumber || '';
 
       document.getElementById('c-wedding-date').value = data.weddingDateISO ? toDatetimeLocal(data.weddingDateISO) : '';
 
@@ -546,6 +455,7 @@ function saveContent() {
       brideParent:   document.getElementById('c-bride-parent').value.trim()
     },
     weddingDateISO,
+    whatsappNumber: document.getElementById('c-whatsapp').value.replace(/\D/g, ''),
     venue: {
       name:    document.getElementById('c-venue-name').value.trim(),
       address: document.getElementById('c-venue-addr').value.trim()
