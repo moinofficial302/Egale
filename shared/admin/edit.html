@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a1628">
+<meta name="robots" content="noindex, nofollow">
+<title>Edit Your Wedding Details</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin.css">
+<style>
+  .expiry-badge {
+    display: inline-block; margin-left: 10px; padding: 4px 10px;
+    border-radius: 20px; background: rgba(255,255,255,0.15);
+    font-size: 12px; font-weight: 600; letter-spacing: 0.5px;
+  }
+  .invalid-wrap {
+    max-width: 420px; margin: 60px auto; text-align: center; padding: 0 24px;
+  }
+  .invalid-wrap .emoji { font-size: 40px; display: block; margin-bottom: 14px; }
+</style>
+</head>
+<body>
+
+  <div class="dash-header">
+    <div class="dash-title"><span class="heart">✏️</span> Edit Your Wedding</div>
+    <span class="expiry-badge" id="expiry-badge">—</span>
+  </div>
+
+  <div id="invalid-wrap" class="invalid-wrap" style="display:none;">
+    <span class="emoji">⏰</span>
+    <p id="invalid-msg" style="color:var(--text-mid);font-size:15px;"></p>
+    <p style="color:var(--text-light);font-size:13px;margin-top:10px;">
+      Please contact us for a fresh edit link.
+    </p>
+  </div>
+
+  <div id="edit-form-wrap" style="display:none;">
+    <div class="dash-content">
+
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:16px;">
+        Update your wedding's details below. Changes save straight to your
+        live invitation. This link stops working once it expires.
+      </p>
+
+      <div class="editor-card">
+        <div class="editor-card-title">💑 Couple Names</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Groom's Display Name</label>
+            <input type="text" class="form-input" id="c-groom-name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bride's Display Name</label>
+            <input type="text" class="form-input" id="c-bride-name">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Groom's Full Name</label>
+            <input type="text" class="form-input" id="c-groom-fullname">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bride's Full Name</label>
+            <input type="text" class="form-input" id="c-bride-fullname">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Groom's Parent Line</label>
+            <input type="text" class="form-input" id="c-groom-parent" placeholder="S/o Mr. Ramesh Kumar">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bride's Parent Line</label>
+            <input type="text" class="form-input" id="c-bride-parent" placeholder="D/o Mr. Suresh Sharma">
+          </div>
+        </div>
+      </div>
+
+      <div class="editor-card">
+        <div class="editor-card-title">📅 Wedding Date &amp; Time</div>
+        <div class="form-group">
+          <label class="form-label">Date &amp; Time</label>
+          <input type="datetime-local" class="form-input" id="c-wedding-date">
+        </div>
+      </div>
+
+      <div class="editor-card">
+        <div class="editor-card-title">📍 Venue</div>
+        <div class="form-group">
+          <label class="form-label">Venue Name</label>
+          <input type="text" class="form-input" id="c-venue-name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Address</label>
+          <input type="text" class="form-input" id="c-venue-addr">
+        </div>
+      </div>
+
+      <div class="editor-card">
+        <div class="editor-card-title">🕐 Program Timeline</div>
+        <div id="timeline-editor"></div>
+        <button type="button" class="add-row-btn" onclick="addTimelineRow()">+ Add Timeline Item</button>
+      </div>
+
+      <div class="editor-card">
+        <div class="editor-card-title">🎊 Pre-Wedding Events</div>
+        <div id="prewedding-editor"></div>
+        <button type="button" class="add-row-btn" onclick="addPreweddingRow()">+ Add Event</button>
+      </div>
+
+      <div class="editor-card">
+        <div class="editor-card-title">💌 Invitation Text</div>
+        <div class="form-group">
+          <textarea class="form-textarea" id="c-invitation-text"></textarea>
+        </div>
+      </div>
+
+      <div class="editor-card">
+        <div class="editor-card-title">👋 Footer Message</div>
+        <div class="form-group">
+          <input type="text" class="form-input" id="c-footer-message">
+        </div>
+      </div>
+
+      <div class="save-bar">
+        <button class="btn-primary" id="save-btn" onclick="saveEdit()">Save Changes</button>
+        <p class="save-status" id="save-status"></p>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script>
+    const params    = new URLSearchParams(location.search);
+    const weddingId = params.get('w');
+    const token     = params.get('t');
+
+    let expiresAtMillis = null;
+    let countdownTimer  = null;
+
+    function showInvalid(msg) {
+      document.getElementById('edit-form-wrap').style.display = 'none';
+      document.getElementById('invalid-wrap').style.display = 'block';
+      document.getElementById('invalid-msg').textContent = msg;
+      document.getElementById('expiry-badge').textContent = 'Link inactive';
+    }
+
+    function escapeAttr(str) { return (str || '').replace(/"/g, '&quot;'); }
+
+    if (!weddingId || !token) {
+      showInvalid('This link is missing information and can\'t be used.');
+    } else {
+      db.collection('weddings').doc(weddingId).get().then(doc => {
+        if (!doc.exists) { showInvalid('This wedding could not be found.'); return; }
+        const data = doc.data();
+        const temp = data.tempEdit;
+
+        if (!temp || temp.token !== token) {
+          showInvalid('This link is invalid. Please ask for a new one.');
+          return;
+        }
+        const expiresAt = temp.expiresAt.toDate ? temp.expiresAt.toDate() : new Date(temp.expiresAt);
+        if (expiresAt.getTime() <= Date.now()) {
+          showInvalid('This link has expired. Please ask for a new edit link.');
+          return;
+        }
+
+        expiresAtMillis = expiresAt.getTime();
+        populateForm(data);
+        document.getElementById('edit-form-wrap').style.display = 'block';
+        startCountdown();
+      }).catch(() => {
+        showInvalid('Could not load your details — check your connection and reload.');
+      });
+    }
+
+    function startCountdown() {
+      function tick() {
+        const remaining = expiresAtMillis - Date.now();
+        if (remaining <= 0) {
+          clearInterval(countdownTimer);
+          showInvalid('This link has expired. Please ask for a new edit link.');
+          return;
+        }
+        const h = Math.floor(remaining / 3600000);
+        const m = Math.floor((remaining % 3600000) / 60000);
+        document.getElementById('expiry-badge').textContent = `⏳ Expires in ${h}h ${m}m`;
+      }
+      tick();
+      countdownTimer = setInterval(tick, 30000);
+    }
+
+    function populateForm(data) {
+      const c = data.coupleNames || {};
+      document.getElementById('c-groom-name').value     = c.groomName || '';
+      document.getElementById('c-bride-name').value     = c.brideName || '';
+      document.getElementById('c-groom-fullname').value = c.groomFullName || '';
+      document.getElementById('c-bride-fullname').value = c.brideFullName || '';
+      document.getElementById('c-groom-parent').value   = c.groomParent || '';
+      document.getElementById('c-bride-parent').value   = c.brideParent || '';
+
+      document.getElementById('c-wedding-date').value = data.weddingDateISO ? toDatetimeLocal(data.weddingDateISO) : '';
+
+      const venue = data.venue || {};
+      document.getElementById('c-venue-name').value = venue.name || '';
+      document.getElementById('c-venue-addr').value = venue.address || '';
+
+      (data.timeline || []).forEach(item => addTimelineRow(item.title, item.time));
+      (data.preWeddingEvents || []).forEach(item => addPreweddingRow(item.name, item.detail));
+
+      document.getElementById('c-invitation-text').value = data.invitationText || '';
+      document.getElementById('c-footer-message').value  = data.footerMessage || '';
+    }
+
+    function toDatetimeLocal(isoString) {
+      const d = new Date(isoString);
+      if (isNaN(d)) return '';
+      const pad = n => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    function addTimelineRow(title = '', time = '') {
+      const wrap = document.createElement('div');
+      wrap.className = 'repeat-item';
+      wrap.innerHTML = `
+        <button type="button" class="repeat-remove" onclick="this.parentElement.remove();">✕</button>
+        <div class="form-group">
+          <label class="form-label">Event Title</label>
+          <input type="text" class="form-input tl-title-input" placeholder="Wedding Ceremony" value="${escapeAttr(title)}">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Date &amp; Time Text</label>
+          <input type="text" class="form-input tl-time-input" placeholder="15 Jun 2026 · 5:00 PM" value="${escapeAttr(time)}">
+        </div>`;
+      document.getElementById('timeline-editor').appendChild(wrap);
+    }
+
+    function addPreweddingRow(name = '', detail = '') {
+      const wrap = document.createElement('div');
+      wrap.className = 'repeat-item';
+      wrap.innerHTML = `
+        <button type="button" class="repeat-remove" onclick="this.parentElement.remove();">✕</button>
+        <div class="form-group">
+          <label class="form-label">Event Name</label>
+          <input type="text" class="form-input pw-name-input" placeholder="Mehendi" value="${escapeAttr(name)}">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Details</label>
+          <input type="text" class="form-input pw-detail-input" placeholder="13 Jun 2026 · 3:00 PM at Bride's Home" value="${escapeAttr(detail)}">
+        </div>`;
+      document.getElementById('prewedding-editor').appendChild(wrap);
+    }
+
+    function saveEdit() {
+      if (!expiresAtMillis || expiresAtMillis <= Date.now()) {
+        showInvalid('This link has expired. Please ask for a new edit link.');
+        return;
+      }
+
+      const btn    = document.getElementById('save-btn');
+      const status = document.getElementById('save-status');
+
+      const timeline = Array.from(document.querySelectorAll('#timeline-editor .repeat-item')).map(row => ({
+        title: row.querySelector('.tl-title-input').value.trim(),
+        time:  row.querySelector('.tl-time-input').value.trim()
+      })).filter(item => item.title || item.time);
+
+      const preWeddingEvents = Array.from(document.querySelectorAll('#prewedding-editor .repeat-item')).map(row => ({
+        name:   row.querySelector('.pw-name-input').value.trim(),
+        detail: row.querySelector('.pw-detail-input').value.trim()
+      })).filter(item => item.name || item.detail);
+
+      const dateLocal = document.getElementById('c-wedding-date').value;
+      const weddingDateISO = dateLocal ? `${dateLocal}:00+05:30` : '';
+
+      const data = {
+        coupleNames: {
+          groomName:     document.getElementById('c-groom-name').value.trim(),
+          brideName:     document.getElementById('c-bride-name').value.trim(),
+          groomFullName: document.getElementById('c-groom-fullname').value.trim(),
+          brideFullName: document.getElementById('c-bride-fullname').value.trim(),
+          groomParent:   document.getElementById('c-groom-parent').value.trim(),
+          brideParent:   document.getElementById('c-bride-parent').value.trim()
+        },
+        weddingDateISO,
+        venue: {
+          name:    document.getElementById('c-venue-name').value.trim(),
+          address: document.getElementById('c-venue-addr').value.trim()
+        },
+        timeline,
+        preWeddingEvents,
+        invitationText: document.getElementById('c-invitation-text').value.trim(),
+        footerMessage:  document.getElementById('c-footer-message').value.trim(),
+        _editToken: token,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+      status.style.color = 'var(--ok)';
+      status.textContent = '';
+
+      db.collection('weddings').doc(weddingId).set(data, { merge: true })
+        .then(() => { status.textContent = '✓ Saved — your invitation is updated.'; })
+        .catch(err => {
+          status.style.color = 'var(--no)';
+          status.textContent = err.code === 'permission-denied'
+            ? '✗ This link has expired. Please ask for a new one.'
+            : '✗ Could not save: ' + err.message;
+        })
+        .finally(() => {
+          btn.disabled = false;
+          btn.textContent = 'Save Changes';
+        });
+    }
+  </script>
+</body>
+</html>
