@@ -188,6 +188,7 @@ function createNewWedding() {
 }
 
 function selectWedding(id) {
+  if (editLinkCountdownTimer) { clearInterval(editLinkCountdownTimer); editLinkCountdownTimer = null; }
   currentWeddingId = id;
   document.getElementById('editing-wedding-label').textContent = `Editing: /${id}/`;
   document.getElementById('wedding-list-view').style.display = 'none';
@@ -196,10 +197,106 @@ function selectWedding(id) {
 }
 
 function backToList() {
+  if (editLinkCountdownTimer) { clearInterval(editLinkCountdownTimer); editLinkCountdownTimer = null; }
   currentWeddingId = null;
   document.getElementById('wedding-edit-view').style.display = 'none';
   document.getElementById('wedding-list-view').style.display = 'block';
   loadWeddingList(); // refresh in case anything changed
+}
+
+/* ═══════════════════════════════
+   TEMPORARY CUSTOMER EDIT LINK
+   A random token + a server-checked expiry timestamp, stored on the
+   wedding doc as tempEdit. edit.html checks this token/expiry itself,
+   and Firestore rules enforce it independently server-side — so a
+   customer can't extend access by changing their phone's clock.
+═══════════════════════════════ */
+let editLinkCountdownTimer = null;
+
+function buildEditLinkUrl(weddingId, token) {
+  const base = location.href.replace(/shared\/admin\/dashboard\.html.*$/, 'shared/edit.html');
+  return `${base}?w=${encodeURIComponent(weddingId)}&t=${encodeURIComponent(token)}`;
+}
+
+function generateEditLink() {
+  const token = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(36).slice(2))
+    .replace(/-/g, '');
+  const expiresAt = firebase.firestore.Timestamp.fromMillis(Date.now() + 2 * 60 * 60 * 1000);
+  const tempEdit = { token, expiresAt };
+
+  db.collection('weddings').doc(currentWeddingId).set({ tempEdit }, { merge: true })
+    .then(() => refreshEditLinkStatus(tempEdit))
+    .catch(err => alert('Could not generate link: ' + err.message));
+}
+
+function extendEditLink() {
+  const expiresAt = firebase.firestore.Timestamp.fromMillis(Date.now() + 2 * 60 * 60 * 1000);
+  db.collection('weddings').doc(currentWeddingId).get().then(doc => {
+    const existing = (doc.data() || {}).tempEdit;
+    if (!existing) { generateEditLink(); return; }
+    const tempEdit = { token: existing.token, expiresAt };
+    return db.collection('weddings').doc(currentWeddingId).set({ tempEdit }, { merge: true })
+      .then(() => refreshEditLinkStatus(tempEdit));
+  }).catch(err => alert('Could not extend link: ' + err.message));
+}
+
+function revokeEditLink() {
+  if (!confirm('Revoke this link now? The customer will no longer be able to save changes.')) return;
+  const expiresAt = firebase.firestore.Timestamp.fromMillis(Date.now() - 1000); // already expired
+  db.collection('weddings').doc(currentWeddingId).get().then(doc => {
+    const existing = (doc.data() || {}).tempEdit;
+    const token = existing ? existing.token : 'revoked';
+    const tempEdit = { token, expiresAt };
+    return db.collection('weddings').doc(currentWeddingId).set({ tempEdit }, { merge: true })
+      .then(() => refreshEditLinkStatus(tempEdit));
+  }).catch(err => alert('Could not revoke link: ' + err.message));
+}
+
+function copyEditLink() {
+  const input = document.getElementById('edit-link-url');
+  input.select();
+  navigator.clipboard?.writeText(input.value).then(() => {
+    document.getElementById('edit-link-status').textContent = '✓ Link copied!';
+  }).catch(() => {
+    document.execCommand('copy');
+  });
+}
+
+function refreshEditLinkStatus(tempEdit) {
+  if (editLinkCountdownTimer) { clearInterval(editLinkCountdownTimer); editLinkCountdownTimer = null; }
+
+  const inactiveEl = document.getElementById('edit-link-inactive');
+  const activeEl   = document.getElementById('edit-link-active');
+
+  const expiresAt = tempEdit && tempEdit.expiresAt
+    ? (tempEdit.expiresAt.toMillis ? tempEdit.expiresAt.toMillis() : new Date(tempEdit.expiresAt).getTime())
+    : 0;
+
+  if (!tempEdit || expiresAt <= Date.now()) {
+    inactiveEl.style.display = 'block';
+    activeEl.style.display = 'none';
+    return;
+  }
+
+  inactiveEl.style.display = 'none';
+  activeEl.style.display = 'block';
+  document.getElementById('edit-link-url').value = buildEditLinkUrl(currentWeddingId, tempEdit.token);
+
+  function tick() {
+    const remaining = expiresAt - Date.now();
+    if (remaining <= 0) {
+      clearInterval(editLinkCountdownTimer);
+      editLinkCountdownTimer = null;
+      inactiveEl.style.display = 'block';
+      activeEl.style.display = 'none';
+      return;
+    }
+    const h = Math.floor(remaining / 3600000);
+    const m = Math.floor((remaining % 3600000) / 60000);
+    document.getElementById('edit-link-status').textContent = `⏳ Expires in ${h}h ${m}m`;
+  }
+  tick();
+  editLinkCountdownTimer = setInterval(tick, 30000);
 }
 
 function escapeHTML(str) {
@@ -207,6 +304,7 @@ function escapeHTML(str) {
   div.textContent = str ?? '';
   return div.innerHTML;
 }
+
 
 /* ═══════════════════════════════
    EDIT CONTENT TAB (scoped to currentWeddingId)
@@ -245,6 +343,7 @@ function loadContentIntoEditor() {
       document.getElementById('c-invitation-text').value = data.invitationText || '';
       document.getElementById('c-footer-message').value = data.footerMessage || '';
 
+      refreshEditLinkStatus(data.tempEdit || null);
       initLivePreviews();
     })
     .catch(err => {
