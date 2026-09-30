@@ -87,6 +87,29 @@
       <div class="tab-panel active" id="tab-content">
 
         <div class="editor-card">
+          <div class="editor-card-title">🔗 Temporary Customer Edit Link</div>
+          <p style="font-size:12px;color:var(--text-light);margin-top:-4px;margin-bottom:12px;">
+            Customer ko ek link do jisse wo khud apna naam/date/venue/timeline
+            2 ghante ke liye edit kar sake — photos, music, theme is se nahi badlenge.
+          </p>
+          <div id="edit-link-inactive">
+            <button class="btn-primary" onclick="generateEditLink()">Generate 2-Hour Link</button>
+          </div>
+          <div id="edit-link-active" style="display:none;">
+            <div class="form-group">
+              <label class="form-label">Customer Ko Ye Link Bhejo</label>
+              <input type="text" class="form-input" id="edit-link-url" readonly>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button class="btn-primary" style="flex:1;min-width:120px;" onclick="copyEditLink()">📋 Copy Link</button>
+              <button class="btn-ghost" onclick="extendEditLink()">+2h Extend</button>
+              <button class="btn-danger" onclick="revokeEditLink()">Revoke Now</button>
+            </div>
+            <p style="font-size:13px;color:var(--text-mid);margin-top:10px;" id="edit-link-status">⏳ —</p>
+          </div>
+        </div>
+
+        <div class="editor-card">
           <div class="editor-card-title">💑 Couple Names</div>
           <div class="form-row">
             <div class="form-group">
