@@ -1,37 +1,37 @@
 /* ═══════════════════════════════════════════════════
    ADMIN PANEL — admin.css
-   Palette: Purple #7b4de8 · Blue #4a5de8 · Light Blue #eef1fb
-   White · Yellow #ffc107 · Black #14142b
+   Palette: Indigo #4F46E5 · Charcoal #111827 · Neutral Gray
+   A clean, professional dashboard theme — one confident accent
+   color, neutral grays for everything else, restrained shadows.
 
    NOTE: the "Live Preview" mockups (.preview-*) intentionally use
    the WEDDING SITE's own rose/gold colors (--site-*), NOT this
    admin theme — they show admins exactly how the public site looks,
    which stays pink regardless of the admin panel's own theme.
+   Left untouched by this redesign on purpose.
 ═══════════════════════════════════════════════════ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
   /* Admin panel's own theme */
-  --p-blue:     #4a5de8;
-  --p-purple:   #7b4de8;
-  --p-gradient: linear-gradient(135deg, #4a5de8 0%, #7b4de8 100%);
-  --bg-light:   #eef1fb;
+  --p-blue:     #4F46E5;   /* indigo-600 — the one accent color */
+  --p-purple:   #4338CA;   /* indigo-700 — hover / gradient end */
+  --p-gradient: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
+  --bg-light:   #F5F6FA;
   --card-white: #ffffff;
-  --black:      #14142b;
-  --text-mid:   #4b5563;
-  --text-light: #8b93a7;
-  --yellow:     #ffc107;
-  --yellow-bg:  #fff8e1;
-  --border-soft: rgba(74,93,232,0.15);
+  --black:      #111827;   /* charcoal, used for headings + header bar */
+  --text-mid:   #4B5563;
+  --text-light: #9CA3AF;
+  --border-soft: rgba(17,24,39,0.08);
 
-  /* RSVP status colors (functional — unrelated to theme) */
-  --ok:         #2e9e63;
-  --ok-bg:      #e5f7ec;
-  --no:         #e5484d;
-  --no-bg:      #fdeceb;
-  --maybe:      #b8860b;
-  --maybe-bg:   #faf1dd;
+  /* RSVP / status colors (functional — unrelated to theme) */
+  --ok:         #15803D;
+  --ok-bg:      #ECFDF3;
+  --no:         #B91C1C;
+  --no-bg:      #FEF2F2;
+  --maybe:      #B45309;
+  --maybe-bg:   #FFFBEB;
 
   /* Wedding SITE's own colors — used only in .preview-* mockups below,
      so the "live preview" stays accurate to the real (pink) site */
@@ -49,10 +49,10 @@ body {
   background: var(--bg-light);
   -webkit-font-smoothing: antialiased;
 }
-::selection { background: var(--p-purple); color: white; }
+::selection { background: var(--p-blue); color: white; }
 a { color: var(--p-blue); }
 button { font-family: inherit; }
-:focus-visible { outline: 2px solid var(--p-purple); outline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--p-blue); outline-offset: 2px; }
 
 /* ─── LOGIN PAGE ─── */
 .login-body {
@@ -60,38 +60,38 @@ button { font-family: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--p-gradient);
+  background: var(--black);
   padding: 24px;
 }
 .login-card {
   width: 100%;
   max-width: 340px;
   background: var(--card-white);
-  border-radius: 20px;
+  border-radius: 16px;
   padding: 40px 28px;
   text-align: center;
-  box-shadow: 0 20px 60px rgba(20,20,43,0.35);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.35);
 }
 .login-emblem {
-  width: 60px; height: 60px;
+  width: 56px; height: 56px;
   margin: 0 auto 16px;
-  border-radius: 50%;
+  border-radius: 14px;
   background: var(--p-gradient);
   display: flex; align-items: center; justify-content: center;
   color: white;
-  font-size: 24px;
+  font-size: 22px;
 }
 .login-title {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
-  font-size: 26px;
+  font-size: 24px;
   color: var(--black);
   margin-bottom: 2px;
 }
 .login-sub {
   font-size: 13px;
   color: var(--text-light);
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   margin-bottom: 28px;
 }
 .login-body .form-input {
@@ -100,7 +100,7 @@ button { font-family: inherit; }
   color: var(--black);
 }
 .login-body .form-input::placeholder { color: var(--text-light); }
-.login-body .form-input:focus { border-color: var(--p-purple); box-shadow: 0 0 0 3px rgba(123,77,232,0.15); }
+.login-body .form-input:focus { border-color: var(--p-blue); box-shadow: 0 0 0 3px rgba(79,70,229,0.15); }
 .login-error {
   color: var(--no);
   font-size: 12px;
@@ -114,7 +114,7 @@ button { font-family: inherit; }
   display: block;
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
   color: var(--text-mid);
   margin-bottom: 6px;
@@ -123,7 +123,7 @@ button { font-family: inherit; }
   width: 100%;
   padding: 12px 14px;
   border: 1px solid var(--border-soft);
-  border-radius: 10px;
+  border-radius: 9px;
   font-size: 14px;
   font-family: inherit;
   color: var(--black);
@@ -132,8 +132,8 @@ button { font-family: inherit; }
   transition: border-color .2s, box-shadow .2s;
 }
 .form-input:focus, .form-select:focus, .form-textarea:focus {
-  border-color: var(--p-purple);
-  box-shadow: 0 0 0 3px rgba(123,77,232,0.12);
+  border-color: var(--p-blue);
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
 }
 .form-textarea { resize: vertical; min-height: 80px; }
 .form-row { display: flex; gap: 12px; }
@@ -145,21 +145,21 @@ button { font-family: inherit; }
   color: white;
   border: none;
   padding: 14px;
-  border-radius: 10px;
+  border-radius: 9px;
   font-size: 14px;
   font-weight: 600;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(74,93,232,0.35);
-  transition: transform .15s;
+  box-shadow: 0 4px 14px rgba(79,70,229,0.30);
+  transition: transform .15s, box-shadow .15s;
 }
 .btn-primary:active { transform: scale(0.98); }
-.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-primary:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; }
 
 .btn-secondary {
   background: white;
-  color: var(--p-purple);
-  border: 1px solid var(--p-purple);
+  color: var(--p-blue);
+  border: 1px solid var(--p-blue);
   padding: 10px 16px;
   border-radius: 8px;
   font-size: 13px;
@@ -169,7 +169,7 @@ button { font-family: inherit; }
 .btn-danger {
   background: var(--no-bg);
   color: var(--no);
-  border: 1px solid rgba(229,72,77,0.3);
+  border: 1px solid rgba(185,28,28,0.25);
   padding: 8px 14px;
   border-radius: 8px;
   font-size: 12px;
@@ -178,7 +178,7 @@ button { font-family: inherit; }
 }
 .btn-ghost {
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.35);
+  border: 1px solid rgba(255,255,255,0.3);
   color: white;
   padding: 8px 16px;
   border-radius: 20px;
@@ -206,33 +206,7 @@ button { font-family: inherit; }
   align-items: center;
   gap: 8px;
 }
-.dash-title .heart { color: var(--yellow); font-size: 16px; }
-
-.dash-tabs {
-  display: flex;
-  background: white;
-  border-bottom: 1px solid var(--border-soft);
-  position: sticky; top: 61px; z-index: 99;
-  overflow-x: auto;
-}
-.dash-tab {
-  flex: 1;
-  min-width: 120px;
-  text-align: center;
-  padding: 14px 10px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-light);
-  background: none;
-  border: none;
-  border-bottom: 3px solid transparent;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.dash-tab.active {
-  color: var(--p-purple);
-  border-bottom-color: var(--p-purple);
-}
+.dash-title .heart { color: rgba(255,255,255,0.65); font-size: 16px; }
 
 .dash-content { padding: 20px 16px 60px; max-width: 640px; margin: 0 auto; }
 .tab-panel { display: none; }
@@ -247,45 +221,20 @@ button { font-family: inherit; }
 }
 .section-heading:first-child { margin-top: 0; }
 
-/* ─── MESSAGES TAB ─── */
-.summary-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin-bottom: 18px;
-}
-.summary-card {
-  background: white;
-  border-radius: 12px;
-  padding: 12px 8px;
-  text-align: center;
-  box-shadow: 0 2px 10px rgba(74,93,232,0.08);
-  border: 1px solid var(--border-soft);
-}
-.summary-num { font-size: 20px; font-weight: 700; color: var(--black); display: block; }
-.summary-label { font-size: 10px; color: var(--text-light); text-transform: uppercase; letter-spacing: .5px; }
-
-.filter-row { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; }
-.filter-chip {
-  padding: 7px 14px;
-  border-radius: 20px;
-  border: 1px solid var(--border-soft);
-  background: white;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-mid);
-  cursor: pointer;
-  white-space: nowrap;
-}
-.filter-chip.active { background: var(--p-gradient); color: white; border-color: transparent; }
-
+/* ─── CARDS (also reused for the "All Weddings" list rows) ─── */
 .rsvp-card {
   background: white;
-  border-radius: 14px;
+  border-radius: 12px;
   padding: 16px;
   margin-bottom: 12px;
-  box-shadow: 0 2px 12px rgba(74,93,232,0.08);
+  box-shadow: 0 1px 3px rgba(17,24,39,0.06), 0 1px 2px rgba(17,24,39,0.04);
   border: 1px solid var(--border-soft);
+  transition: box-shadow .15s, border-color .15s;
+}
+.rsvp-card[style*="cursor:pointer"]:hover,
+.rsvp-card[style*="cursor: pointer"]:hover {
+  box-shadow: 0 4px 14px rgba(17,24,39,0.10);
+  border-color: rgba(79,70,229,0.25);
 }
 .rsvp-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
 .rsvp-name { font-weight: 600; font-size: 15px; color: var(--black); }
@@ -293,7 +242,7 @@ button { font-family: inherit; }
 .rsvp-badge {
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: .5px;
+  letter-spacing: .4px;
   text-transform: uppercase;
   padding: 4px 10px;
   border-radius: 20px;
@@ -302,9 +251,6 @@ button { font-family: inherit; }
 .rsvp-badge.yes   { background: var(--ok-bg);    color: var(--ok); }
 .rsvp-badge.no    { background: var(--no-bg);    color: var(--no); }
 .rsvp-badge.maybe { background: var(--maybe-bg); color: var(--maybe); }
-.rsvp-message { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin: 8px 0; }
-.rsvp-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
-.rsvp-time { font-size: 11px; color: var(--text-light); }
 
 .empty-state {
   text-align: center;
@@ -314,21 +260,21 @@ button { font-family: inherit; }
 }
 .empty-state .emoji { font-size: 32px; display: block; margin-bottom: 8px; }
 
-/* ─── CONTENT EDITOR TAB ─── */
+/* ─── CONTENT EDITOR ─── */
 .editor-card {
   background: white;
-  border-radius: 14px;
+  border-radius: 12px;
   padding: 18px;
   margin-bottom: 16px;
   border: 1px solid var(--border-soft);
-  box-shadow: 0 2px 10px rgba(74,93,232,0.06);
+  box-shadow: 0 1px 3px rgba(17,24,39,0.05);
 }
 .editor-card-title {
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
-  color: var(--p-purple);
+  color: var(--p-blue);
   margin-bottom: 14px;
   display: flex;
   align-items: center;
@@ -356,10 +302,10 @@ button { font-family: inherit; }
 .add-row-btn {
   width: 100%;
   padding: 10px;
-  border: 1px dashed var(--p-purple);
+  border: 1px dashed var(--p-blue);
   background: var(--bg-light);
-  color: var(--p-purple);
-  border-radius: 10px;
+  color: var(--p-blue);
+  border-radius: 9px;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -382,12 +328,13 @@ button { font-family: inherit; }
 
 /* ─── LIVE PREVIEW (mini mockups of the real, pink wedding site) ───
    These deliberately use --site-* colors, not the admin theme above,
-   so the preview stays accurate to what guests actually see. */
+   so the preview stays accurate to what guests actually see.
+   Untouched by the admin theme redesign — do not recolor. */
 .live-preview {
   margin-top: 16px;
   padding: 14px;
   background: var(--bg-light);
-  border: 1px dashed rgba(74,93,232,0.3);
+  border: 1px dashed rgba(79,70,229,0.25);
   border-radius: 10px;
 }
 .live-preview-label {
@@ -395,7 +342,7 @@ button { font-family: inherit; }
   font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  color: var(--p-purple);
+  color: var(--p-blue);
   margin-bottom: 10px;
 }
 
@@ -541,9 +488,9 @@ button { font-family: inherit; }
 
 /* Loading spinner */
 .spinner {
-  width: 28px; height: 28px;
-  border: 3px solid rgba(74,93,232,0.15);
-  border-top-color: var(--p-purple);
+  width: 26px; height: 26px;
+  border: 3px solid rgba(79,70,229,0.15);
+  border-top-color: var(--p-blue);
   border-radius: 50%;
   animation: spin .7s linear infinite;
   margin: 40px auto;
@@ -566,8 +513,8 @@ button { font-family: inherit; }
   font-family: 'Montserrat', sans-serif;
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.5px;
-  box-shadow: 0 6px 20px rgba(20,20,43,0.3);
+  letter-spacing: 0.3px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
   cursor: pointer;
 }
 .install-btn.show { display: flex; animation: fadeIn .4s ease; }
@@ -580,4 +527,3 @@ button { font-family: inherit; }
   display: none;
 }
 .login-body .install-btn.show { display: inline-flex; }
-   
