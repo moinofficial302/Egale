@@ -102,8 +102,12 @@ function loadWeddingList() {
       }
 
       const weddings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      // Most recently updated first, so active work stays at the top
+      weddings.forEach(w => { w._status = getWeddingStatus(w.weddingDateISO); });
+
+      // Ready-to-reassign ones float to the top (status rank 0), then
+      // upcoming/recent ones by most-recently-updated
       weddings.sort((a, b) => {
+        if (a._status.rank !== b._status.rank) return a._status.rank - b._status.rank;
         const at = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : 0;
         const bt = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : 0;
         return bt - at;
@@ -114,15 +118,15 @@ function loadWeddingList() {
         const names = (c.groomName || c.brideName)
           ? `${escapeHTML(c.groomName || '?')} &amp; ${escapeHTML(c.brideName || '?')}`
           : '(names not set yet)';
-        const dateLabel = w.weddingDateISO ? formatDateShort(w.weddingDateISO) : 'Date not set';
+        const inactiveTag = w.cardActive === false ? ' <span style="color:var(--no);">(OFF)</span>' : '';
         return `
           <div class="rsvp-card" style="cursor:pointer;" onclick='selectWedding(${JSON.stringify(w.id)})'>
             <div class="rsvp-top">
               <div>
-                <div class="rsvp-name">${names}</div>
+                <div class="rsvp-name">${names}${inactiveTag}</div>
                 <span class="rsvp-phone" style="text-decoration:none;">/${escapeHTML(w.id)}/</span>
               </div>
-              <span class="rsvp-badge yes">${dateLabel}</span>
+              <span class="rsvp-badge ${w._status.cls}">${w._status.label}</span>
             </div>
           </div>`;
       }).join('');
@@ -137,6 +141,26 @@ function formatDateShort(iso) {
   const d = new Date(iso);
   if (isNaN(d)) return '';
   return d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+/* Turns a wedding's date into a status badge for the list.
+   rank controls sort order — lower rank floats to the top. */
+const REASSIGN_AFTER_DAYS = 15;
+
+function getWeddingStatus(weddingDateISO) {
+  if (!weddingDateISO) return { label: 'Date not set', cls: 'maybe', rank: 1 };
+  const weddingDate = new Date(weddingDateISO);
+  if (isNaN(weddingDate)) return { label: 'Date not set', cls: 'maybe', rank: 1 };
+
+  const diffDays = Math.floor((Date.now() - weddingDate.getTime()) / 86400000);
+
+  if (diffDays < 0) {
+    return { label: `📅 ${formatDateShort(weddingDateISO)}`, cls: 'yes', rank: 2 };       // upcoming
+  }
+  if (diffDays <= REASSIGN_AFTER_DAYS) {
+    return { label: `✓ Done ${diffDays}d ago`, cls: 'maybe', rank: 1 };                   // just finished
+  }
+  return { label: `⚠ Ready to reassign (${diffDays}d)`, cls: 'no', rank: 0 };             // overdue → top of list
 }
 
 function createNewWedding() {
@@ -299,6 +323,41 @@ function refreshEditLinkStatus(tempEdit) {
   editLinkCountdownTimer = setInterval(tick, 30000);
 }
 
+/* ═══════════════════════════════
+   CARD ON/OFF SWITCH
+   When off, the public site shows an "unavailable" message instead
+   of the invitation — useful for unpaid or wound-down weddings
+   without deleting anything.
+═══════════════════════════════ */
+let currentCardActive = true;
+
+function renderCardStatus(isActive) {
+  currentCardActive = isActive;
+  const label = document.getElementById('card-status-label');
+  const btn   = document.getElementById('card-toggle-btn');
+  if (!label || !btn) return;
+
+  if (isActive) {
+    label.textContent = '🟢 Card is ON — guests can view this invitation.';
+    btn.textContent = 'Turn OFF';
+    btn.className = 'btn-danger';
+  } else {
+    label.textContent = '🔴 Card is OFF — guests see an "unavailable" message instead.';
+    btn.textContent = 'Turn ON';
+    btn.className = 'btn-primary';
+  }
+}
+
+function toggleCardActive() {
+  const newValue = !currentCardActive;
+  const btn = document.getElementById('card-toggle-btn');
+  btn.disabled = true;
+  db.collection('weddings').doc(currentWeddingId).set({ cardActive: newValue }, { merge: true })
+    .then(() => renderCardStatus(newValue))
+    .catch(err => alert('Could not update: ' + err.message))
+    .finally(() => { btn.disabled = false; });
+}
+
 function escapeHTML(str) {
   const div = document.createElement('div');
   div.textContent = str ?? '';
@@ -344,6 +403,7 @@ function loadContentIntoEditor() {
       document.getElementById('c-footer-message').value = data.footerMessage || '';
 
       refreshEditLinkStatus(data.tempEdit || null);
+      renderCardStatus(data.cardActive !== false);
       initLivePreviews();
     })
     .catch(err => {
