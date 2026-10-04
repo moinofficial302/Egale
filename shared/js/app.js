@@ -577,11 +577,33 @@ function loadSiteContent() {
     .then(doc => {
       if (!doc.exists) return; // admin hasn't saved anything yet — keep static content
       const data = doc.data();
+
+      if (data.cardActive === false) {
+        showCardUnavailable();
+        return;
+      }
+
       applySiteContent(data);
     })
     .catch(err => {
       console.warn('[App] Could not load site content, using defaults:', err);
     });
+}
+
+/* Card ON/OFF switch (set from the admin panel) — when off, replace
+   the whole page with a simple message instead of the invitation. */
+function showCardUnavailable() {
+  document.body.innerHTML = `
+    <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;
+                background:#0a1628;color:#fff;text-align:center;padding:32px;
+                font-family:'Montserrat',sans-serif;">
+      <div>
+        <div style="font-size:44px;margin-bottom:16px;">💌</div>
+        <p style="font-size:16px;opacity:0.85;line-height:1.6;">
+          This invitation is no longer available.
+        </p>
+      </div>
+    </div>`;
 }
 
 function setText(id, value) {
