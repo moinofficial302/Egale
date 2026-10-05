@@ -1,40 +1,50 @@
 /* ═══════════════════════════════════════════════════
    ADMIN PANEL — admin.css
-   Palette: Indigo #4F46E5 · Charcoal #111827 · Neutral Gray
-   A clean, professional dashboard theme — one confident accent
-   color, neutral grays for everything else, restrained shadows.
+   "Deep Slate & Teal" — a dark, modern professional
+   dashboard theme. One confident accent (teal) against
+   deep navy-slate surfaces, soft borders, no gradients
+   except on primary buttons.
 
-   NOTE: the "Live Preview" mockups (.preview-*) intentionally use
-   the WEDDING SITE's own rose/gold colors (--site-*), NOT this
-   admin theme — they show admins exactly how the public site looks,
-   which stays pink regardless of the admin panel's own theme.
-   Left untouched by this redesign on purpose.
+   NOTE: the "Live Preview" mockups (.preview-*) intentionally
+   stay LIGHT and use the WEDDING SITE's own rose/gold colors
+   (--site-*), not this dark admin theme — they're meant to read
+   as a little window showing exactly what the public (light,
+   pink) site looks like, regardless of the admin panel's own
+   theme. Left untouched by this redesign on purpose.
 ═══════════════════════════════════════════════════ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Admin panel's own theme */
-  --p-blue:     #4F46E5;   /* indigo-600 — the one accent color */
-  --p-purple:   #4338CA;   /* indigo-700 — hover / gradient end */
-  --p-gradient: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
-  --bg-light:   #F5F6FA;
-  --card-white: #ffffff;
-  --black:      #111827;   /* charcoal, used for headings + header bar */
-  --text-mid:   #4B5563;
-  --text-light: #9CA3AF;
-  --border-soft: rgba(17,24,39,0.08);
+  /* Surfaces */
+  --bg-page:     #0B1220;
+  --bg-card:     #141B2D;
+  --bg-card-alt: #1B2338;
+  --bg-input:    #0F1726;
+  --border-soft: rgba(255,255,255,0.09);
+  --border-mid:  rgba(255,255,255,0.14);
 
-  /* RSVP / status colors (functional — unrelated to theme) */
-  --ok:         #15803D;
-  --ok-bg:      #ECFDF3;
-  --no:         #B91C1C;
-  --no-bg:      #FEF2F2;
-  --maybe:      #B45309;
-  --maybe-bg:   #FFFBEB;
+  /* Accent — the one confident color */
+  --accent:      #14B8A6;
+  --accent-dark: #0D9488;
+  --accent-grad: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
+  --accent-soft: rgba(20,184,166,0.14);
 
-  /* Wedding SITE's own colors — used only in .preview-* mockups below,
-     so the "live preview" stays accurate to the real (pink) site */
+  /* Text */
+  --text-primary:   #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted:     #64748B;
+
+  /* Status colors (functional, tuned for dark backgrounds) */
+  --ok:       #34D399;
+  --ok-bg:    rgba(52,211,153,0.14);
+  --no:       #F87171;
+  --no-bg:    rgba(248,113,113,0.14);
+  --maybe:    #FBBF24;
+  --maybe-bg: rgba(251,191,36,0.14);
+
+  /* Wedding SITE's own colors — used only in .preview-* mockups
+     below, so the "live preview" stays accurate to the real site */
   --site-rose:       #c5768a;
   --site-rose-dark:  #a85870;
   --site-gold:       #c9a96e;
@@ -45,14 +55,14 @@
 html { -webkit-text-size-adjust: 100%; }
 body {
   font-family: 'Montserrat', sans-serif;
-  color: var(--black);
-  background: var(--bg-light);
+  color: var(--text-primary);
+  background: var(--bg-page);
   -webkit-font-smoothing: antialiased;
 }
-::selection { background: var(--p-blue); color: white; }
-a { color: var(--p-blue); }
+::selection { background: var(--accent); color: #04211c; }
+a { color: var(--accent); }
 button { font-family: inherit; }
-:focus-visible { outline: 2px solid var(--p-blue); outline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ─── LOGIN PAGE ─── */
 .login-body {
@@ -60,47 +70,42 @@ button { font-family: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--black);
+  background: var(--bg-page);
   padding: 24px;
 }
 .login-card {
   width: 100%;
   max-width: 340px;
-  background: var(--card-white);
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
   border-radius: 16px;
   padding: 40px 28px;
   text-align: center;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5);
 }
 .login-emblem {
   width: 56px; height: 56px;
   margin: 0 auto 16px;
   border-radius: 14px;
-  background: var(--p-gradient);
+  background: var(--accent-grad);
   display: flex; align-items: center; justify-content: center;
-  color: white;
+  color: #04211c;
   font-size: 22px;
 }
 .login-title {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   font-size: 24px;
-  color: var(--black);
+  color: var(--text-primary);
   margin-bottom: 2px;
 }
 .login-sub {
   font-size: 13px;
-  color: var(--text-light);
+  color: var(--text-muted);
   letter-spacing: 0.3px;
   margin-bottom: 28px;
 }
-.login-body .form-input {
-  background: var(--bg-light);
-  border-color: var(--border-soft);
-  color: var(--black);
-}
-.login-body .form-input::placeholder { color: var(--text-light); }
-.login-body .form-input:focus { border-color: var(--p-blue); box-shadow: 0 0 0 3px rgba(79,70,229,0.15); }
+.login-body .form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 .login-error {
   color: var(--no);
   font-size: 12px;
@@ -116,7 +121,7 @@ button { font-family: inherit; }
   font-weight: 600;
   letter-spacing: 0.8px;
   text-transform: uppercase;
-  color: var(--text-mid);
+  color: var(--text-secondary);
   margin-bottom: 6px;
 }
 .form-input, .form-select, .form-textarea {
@@ -126,40 +131,45 @@ button { font-family: inherit; }
   border-radius: 9px;
   font-size: 14px;
   font-family: inherit;
-  color: var(--black);
-  background: white;
+  color: var(--text-primary);
+  background: var(--bg-input);
   outline: none;
   transition: border-color .2s, box-shadow .2s;
 }
+.form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); }
 .form-input:focus, .form-select:focus, .form-textarea:focus {
-  border-color: var(--p-blue);
-  box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 .form-textarea { resize: vertical; min-height: 80px; }
 .form-row { display: flex; gap: 12px; }
 .form-row .form-group { flex: 1; }
 
+/* select options render with the OS's native light popover on most
+   mobile browsers regardless of our styling — force readable colors */
+.form-select option { color: #000; background: #fff; }
+
 .btn-primary {
   width: 100%;
-  background: var(--p-gradient);
-  color: white;
+  background: var(--accent-grad);
+  color: #04211c;
   border: none;
   padding: 14px;
   border-radius: 9px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.3px;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(79,70,229,0.30);
+  box-shadow: 0 4px 16px rgba(20,184,166,0.30);
   transition: transform .15s, box-shadow .15s;
 }
 .btn-primary:active { transform: scale(0.98); }
-.btn-primary:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
 
 .btn-secondary {
-  background: white;
-  color: var(--p-blue);
-  border: 1px solid var(--p-blue);
+  background: var(--bg-card-alt);
+  color: var(--accent);
+  border: 1px solid var(--accent);
   padding: 10px 16px;
   border-radius: 8px;
   font-size: 13px;
@@ -169,7 +179,7 @@ button { font-family: inherit; }
 .btn-danger {
   background: var(--no-bg);
   color: var(--no);
-  border: 1px solid rgba(185,28,28,0.25);
+  border: 1px solid rgba(248,113,113,0.3);
   padding: 8px 14px;
   border-radius: 8px;
   font-size: 12px;
@@ -178,8 +188,8 @@ button { font-family: inherit; }
 }
 .btn-ghost {
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.3);
-  color: white;
+  border: 1px solid var(--border-mid);
+  color: var(--text-primary);
   padding: 8px 16px;
   border-radius: 20px;
   font-size: 12px;
@@ -188,25 +198,25 @@ button { font-family: inherit; }
 
 /* ─── DASHBOARD SHELL ─── */
 .dash-header {
-  background: var(--black);
-  color: white;
+  background: var(--bg-card);
+  color: var(--text-primary);
   padding: 16px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  border-bottom: 1px solid var(--border-soft);
 }
 .dash-title {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   font-size: 18px;
-  color: white;
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 8px;
 }
-.dash-title .heart { color: rgba(255,255,255,0.65); font-size: 16px; }
+.dash-title .heart { color: var(--accent); font-size: 16px; }
 
 .dash-content { padding: 20px 16px 60px; max-width: 640px; margin: 0 auto; }
 .tab-panel { display: none; }
@@ -216,29 +226,28 @@ button { font-family: inherit; }
 .section-heading {
   font-weight: 700;
   font-size: 18px;
-  color: var(--black);
+  color: var(--text-primary);
   margin: 24px 0 12px;
 }
 .section-heading:first-child { margin-top: 0; }
 
 /* ─── CARDS (also reused for the "All Weddings" list rows) ─── */
 .rsvp-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 12px;
-  box-shadow: 0 1px 3px rgba(17,24,39,0.06), 0 1px 2px rgba(17,24,39,0.04);
   border: 1px solid var(--border-soft);
-  transition: box-shadow .15s, border-color .15s;
+  transition: border-color .15s, background .15s;
 }
 .rsvp-card[style*="cursor:pointer"]:hover,
 .rsvp-card[style*="cursor: pointer"]:hover {
-  box-shadow: 0 4px 14px rgba(17,24,39,0.10);
-  border-color: rgba(79,70,229,0.25);
+  border-color: var(--accent);
+  background: var(--bg-card-alt);
 }
 .rsvp-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
-.rsvp-name { font-weight: 600; font-size: 15px; color: var(--black); }
-.rsvp-phone { font-size: 12px; color: var(--p-blue); text-decoration: none; }
+.rsvp-name { font-weight: 600; font-size: 15px; color: var(--text-primary); }
+.rsvp-phone { font-size: 12px; color: var(--accent); text-decoration: none; }
 .rsvp-badge {
   font-size: 10px;
   font-weight: 700;
@@ -255,26 +264,25 @@ button { font-family: inherit; }
 .empty-state {
   text-align: center;
   padding: 40px 20px;
-  color: var(--text-light);
+  color: var(--text-muted);
   font-size: 13px;
 }
 .empty-state .emoji { font-size: 32px; display: block; margin-bottom: 8px; }
 
 /* ─── CONTENT EDITOR ─── */
 .editor-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 18px;
   margin-bottom: 16px;
   border: 1px solid var(--border-soft);
-  box-shadow: 0 1px 3px rgba(17,24,39,0.05);
 }
 .editor-card-title {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.8px;
   text-transform: uppercase;
-  color: var(--p-blue);
+  color: var(--accent);
   margin-bottom: 14px;
   display: flex;
   align-items: center;
@@ -282,11 +290,12 @@ button { font-family: inherit; }
 }
 
 .repeat-item {
-  border: 1px dashed var(--border-soft);
+  border: 1px dashed var(--border-mid);
   border-radius: 10px;
   padding: 12px;
   margin-bottom: 10px;
   position: relative;
+  background: var(--bg-card-alt);
 }
 .repeat-remove {
   position: absolute; top: 8px; right: 8px;
@@ -302,9 +311,9 @@ button { font-family: inherit; }
 .add-row-btn {
   width: 100%;
   padding: 10px;
-  border: 1px dashed var(--p-blue);
-  background: var(--bg-light);
-  color: var(--p-blue);
+  border: 1px dashed var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
   border-radius: 9px;
   font-size: 13px;
   font-weight: 500;
@@ -315,7 +324,7 @@ button { font-family: inherit; }
 .save-bar {
   position: sticky;
   bottom: 0;
-  background: linear-gradient(to top, var(--bg-light) 60%, transparent);
+  background: linear-gradient(to top, var(--bg-page) 60%, transparent);
   padding: 16px 0 0;
 }
 .save-status {
@@ -326,15 +335,16 @@ button { font-family: inherit; }
   margin-top: 8px;
 }
 
-/* ─── LIVE PREVIEW (mini mockups of the real, pink wedding site) ───
-   These deliberately use --site-* colors, not the admin theme above,
-   so the preview stays accurate to what guests actually see.
-   Untouched by the admin theme redesign — do not recolor. */
+/* ─── LIVE PREVIEW ───
+   A deliberately LIGHT "window" showing the real (pink) wedding
+   site — stays light + uses --site-* colors regardless of the dark
+   admin theme above, so it's always an accurate little mockup of
+   what guests actually see. Do not recolor to match the dark theme. */
 .live-preview {
   margin-top: 16px;
   padding: 14px;
-  background: var(--bg-light);
-  border: 1px dashed rgba(79,70,229,0.25);
+  background: #Faf8f6;
+  border: 1px solid var(--border-mid);
   border-radius: 10px;
 }
 .live-preview-label {
@@ -342,7 +352,7 @@ button { font-family: inherit; }
   font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  color: var(--p-blue);
+  color: var(--accent-dark);
   margin-bottom: 10px;
 }
 
@@ -414,9 +424,7 @@ button { font-family: inherit; }
   margin-top: 4px;
 }
 
-.preview-venue {
-  text-align: center;
-}
+.preview-venue { text-align: center; }
 .preview-venue .p-vname {
   font-family: 'Cormorant Garamond', serif;
   font-weight: 600;
@@ -448,26 +456,15 @@ button { font-family: inherit; }
   font-size: 13px;
   color: var(--site-rose);
 }
-.preview-timeline-item .p-time {
-  font-size: 11px;
-  color: var(--site-text-light);
-}
-.preview-prewedding-item {
-  flex-direction: column;
-  text-align: center;
-  align-items: center;
-}
+.preview-timeline-item .p-time { font-size: 11px; color: var(--site-text-light); }
+.preview-prewedding-item { flex-direction: column; text-align: center; align-items: center; }
 .preview-prewedding-item .p-pwname {
   font-family: 'Cormorant Garamond', serif;
   font-weight: 600;
   font-size: 15px;
   color: var(--site-rose);
 }
-.preview-prewedding-item .p-pwdetail {
-  font-size: 11px;
-  color: var(--site-text-light);
-  margin-top: 2px;
-}
+.preview-prewedding-item .p-pwdetail { font-size: 11px; color: var(--site-text-light); margin-top: 2px; }
 
 .preview-invite {
   font-family: 'Cormorant Garamond', serif;
@@ -477,7 +474,6 @@ button { font-family: inherit; }
   text-align: center;
   line-height: 1.7;
 }
-
 .preview-footer {
   font-family: 'Cormorant Garamond', serif;
   font-weight: 600;
@@ -489,8 +485,8 @@ button { font-family: inherit; }
 /* Loading spinner */
 .spinner {
   width: 26px; height: 26px;
-  border: 3px solid rgba(79,70,229,0.15);
-  border-top-color: var(--p-blue);
+  border: 3px solid var(--accent-soft);
+  border-top-color: var(--accent);
   border-radius: 50%;
   animation: spin .7s linear infinite;
   margin: 40px auto;
@@ -505,25 +501,20 @@ button { font-family: inherit; }
   display: none;
   align-items: center;
   gap: 6px;
-  background: var(--p-gradient);
-  color: white;
+  background: var(--accent-grad);
+  color: #04211c;
   border: none;
   padding: 12px 18px;
   border-radius: 30px;
   font-family: 'Montserrat', sans-serif;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.3px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.45);
   cursor: pointer;
 }
 .install-btn.show { display: flex; animation: fadeIn .4s ease; }
 .install-btn:active { transform: scale(0.96); }
 
-/* Login page variant sits centered under the form instead of floating */
-.login-body .install-btn {
-  position: static;
-  margin: 20px auto 0;
-  display: none;
-}
+.login-body .install-btn { position: static; margin: 20px auto 0; display: none; }
 .login-body .install-btn.show { display: inline-flex; }
