@@ -60,6 +60,26 @@
 
       <div class="editor-card">
         <div class="editor-card-title">💍 All Weddings</div>
+
+        <div class="stats-row" id="wedding-stats">
+          <div class="stat-box"><span class="stat-num" id="stat-total">0</span><span class="stat-label">Total</span></div>
+          <div class="stat-box"><span class="stat-num" id="stat-active">0</span><span class="stat-label">Active</span></div>
+          <div class="stat-box"><span class="stat-num" id="stat-upcoming">0</span><span class="stat-label">Upcoming</span></div>
+          <div class="stat-box"><span class="stat-num" id="stat-reassign">0</span><span class="stat-label">Ready</span></div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:10px;">
+          <input type="text" class="form-input" id="wedding-search" placeholder="🔍 Search by name or ID..." oninput="renderWeddingList()">
+        </div>
+        <div class="form-group">
+          <select class="form-select" id="wedding-sort" onchange="renderWeddingList()">
+            <option value="status">Sort: Status (default)</option>
+            <option value="name">Sort: Name A–Z</option>
+            <option value="date">Sort: Wedding Date</option>
+            <option value="updated">Sort: Recently Updated</option>
+          </select>
+        </div>
+
         <div id="wedding-list">
           <div class="spinner"></div>
         </div>
