@@ -90,51 +90,128 @@ if (document.getElementById('wedding-list')) {
 /* ═══════════════════════════════
    WEDDING LIST (the new home screen)
 ═══════════════════════════════ */
+let allWeddings = [];
+
 function loadWeddingList() {
   const listEl = document.getElementById('wedding-list');
   listEl.innerHTML = '<div class="spinner"></div>';
 
   db.collection('weddings').get()
     .then(snapshot => {
-      if (snapshot.empty) {
-        listEl.innerHTML = `<div class="empty-state"><span class="emoji">💍</span>No weddings yet — add one above.</div>`;
-        return;
-      }
-
-      const weddings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      weddings.forEach(w => { w._status = getWeddingStatus(w.weddingDateISO); });
-
-      // Ready-to-reassign ones float to the top (status rank 0), then
-      // upcoming/recent ones by most-recently-updated
-      weddings.sort((a, b) => {
-        if (a._status.rank !== b._status.rank) return a._status.rank - b._status.rank;
-        const at = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : 0;
-        const bt = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : 0;
-        return bt - at;
-      });
-
-      listEl.innerHTML = weddings.map(w => {
-        const c = w.coupleNames || {};
-        const names = (c.groomName || c.brideName)
-          ? `${escapeHTML(c.groomName || '?')} &amp; ${escapeHTML(c.brideName || '?')}`
-          : '(names not set yet)';
-        const inactiveTag = w.cardActive === false ? ' <span style="color:var(--no);">(OFF)</span>' : '';
-        return `
-          <div class="rsvp-card" style="cursor:pointer;" onclick='selectWedding(${JSON.stringify(w.id)})'>
-            <div class="rsvp-top">
-              <div>
-                <div class="rsvp-name">${names}${inactiveTag}</div>
-                <span class="rsvp-phone" style="text-decoration:none;">/${escapeHTML(w.id)}/</span>
-              </div>
-              <span class="rsvp-badge ${w._status.cls}">${w._status.label}</span>
-            </div>
-          </div>`;
-      }).join('');
+      allWeddings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      allWeddings.forEach(w => { w._status = getWeddingStatus(w.weddingDateISO); });
+      renderStats();
+      renderWeddingList();
     })
     .catch(err => {
       console.error('[Admin] Failed to load wedding list:', err);
       listEl.innerHTML = `<div class="empty-state"><span class="emoji">⚠️</span>Could not load weddings. Check your connection.</div>`;
     });
+}
+
+function renderStats() {
+  document.getElementById('stat-total').textContent    = allWeddings.length;
+  document.getElementById('stat-active').textContent   = allWeddings.filter(w => w.cardActive !== false).length;
+  document.getElementById('stat-upcoming').textContent = allWeddings.filter(w => w._status.rank === 2).length;
+  document.getElementById('stat-reassign').textContent = allWeddings.filter(w => w._status.rank === 0).length;
+}
+
+/* Filters + sorts the already-fetched allWeddings array and re-renders —
+   no new Firestore read, so typing in the search box stays instant. */
+function renderWeddingList() {
+  const listEl = document.getElementById('wedding-list');
+  const query  = (document.getElementById('wedding-search')?.value || '').trim().toLowerCase();
+  const sortBy = document.getElementById('wedding-sort')?.value || 'status';
+
+  let filtered = allWeddings;
+  if (query) {
+    filtered = filtered.filter(w => {
+      const c = w.coupleNames || {};
+      const haystack = `${c.groomName || ''} ${c.brideName || ''} ${c.groomFullName || ''} ${c.brideFullName || ''} ${w.id}`.toLowerCase();
+      return haystack.includes(query);
+    });
+  }
+
+  const sorted = filtered.slice();
+  if (sortBy === 'name') {
+    sorted.sort((a, b) => {
+      const an = ((a.coupleNames || {}).groomName || a.id).toLowerCase();
+      const bn = ((b.coupleNames || {}).groomName || b.id).toLowerCase();
+      return an.localeCompare(bn);
+    });
+  } else if (sortBy === 'date') {
+    sorted.sort((a, b) => {
+      const ad = a.weddingDateISO ? new Date(a.weddingDateISO).getTime() : Infinity;
+      const bd = b.weddingDateISO ? new Date(b.weddingDateISO).getTime() : Infinity;
+      return ad - bd;
+    });
+  } else if (sortBy === 'updated') {
+    sorted.sort((a, b) => {
+      const at = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : 0;
+      const bt = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : 0;
+      return bt - at;
+    });
+  } else {
+    // status (default): ready-to-reassign float to top, then by most-recently-updated
+    sorted.sort((a, b) => {
+      if (a._status.rank !== b._status.rank) return a._status.rank - b._status.rank;
+      const at = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : 0;
+      const bt = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : 0;
+      return bt - at;
+    });
+  }
+
+  if (!sorted.length) {
+    listEl.innerHTML = query
+      ? `<div class="empty-state"><span class="emoji">🔍</span>No weddings match "${escapeHTML(query)}".</div>`
+      : `<div class="empty-state"><span class="emoji">💍</span>No weddings yet — add one above.</div>`;
+    return;
+  }
+
+  listEl.innerHTML = sorted.map(w => {
+    const c = w.coupleNames || {};
+    const names = (c.groomName || c.brideName)
+      ? `${escapeHTML(c.groomName || '?')} &amp; ${escapeHTML(c.brideName || '?')}`
+      : '(names not set yet)';
+    const plainNames = (c.groomName || c.brideName)
+      ? `${c.groomName || '?'} & ${c.brideName || '?'}`
+      : w.id;
+    const inactiveTag = w.cardActive === false ? ' <span style="color:var(--no);">(OFF)</span>' : '';
+    const publicUrl = buildPublicUrl(w.id);
+    return `
+      <div class="rsvp-card" style="cursor:pointer;" onclick='selectWedding(${JSON.stringify(w.id)})'>
+        <div class="rsvp-top">
+          <div>
+            <div class="rsvp-name">${names}${inactiveTag}</div>
+            <span class="rsvp-phone" style="text-decoration:none;">/${escapeHTML(w.id)}/</span>
+          </div>
+          <span class="rsvp-badge ${w._status.cls}">${w._status.label}</span>
+        </div>
+        <div class="card-quick-actions" onclick="event.stopPropagation()">
+          <button class="quick-btn" onclick='window.open(${JSON.stringify(publicUrl)}, "_blank")'>🔗 Open</button>
+          <button class="quick-btn" onclick='quickCopyLink(${JSON.stringify(publicUrl)}, this)'>📋 Copy</button>
+          <button class="quick-btn" onclick='quickShareWhatsapp(${JSON.stringify(publicUrl)}, ${JSON.stringify(plainNames)})'>📤 Share</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function buildPublicUrl(weddingId) {
+  const base = location.href.replace(/shared\/admin\/dashboard\.html.*$/, '');
+  return `${base}${weddingId}/`;
+}
+
+function quickCopyLink(url, btn) {
+  navigator.clipboard?.writeText(url).then(() => {
+    const original = btn.textContent;
+    btn.textContent = '✓ Copied';
+    setTimeout(() => { btn.textContent = original; }, 1500);
+  });
+}
+
+function quickShareWhatsapp(url, names) {
+  const msg = `Hi! Here's the wedding invitation link for ${names}: ${url}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
 function formatDateShort(iso) {
