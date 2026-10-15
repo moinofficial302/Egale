@@ -52,7 +52,7 @@
           <button class="btn-primary" id="create-wedding-btn" onclick="createNewWedding()">Create Wedding</button>
           <p class="save-status" id="create-wedding-status"></p>
         </div>
-        <p style="font-size:12px;color:var(--text-light);margin-top:10px;">
+        <p style="font-size:12px;color:var(--text-muted);margin-top:10px;">
           This only creates the database entry. You still need to duplicate the
           site folder on GitHub with this same ID for the public link to work.
         </p>
@@ -107,14 +107,28 @@
       <div class="tab-panel active" id="tab-content">
 
         <div class="editor-card">
+          <div class="editor-card-title">📊 Analytics</div>
+          <div class="stats-row" style="grid-template-columns: 1fr 1fr;">
+            <div class="stat-box">
+              <span class="stat-num" id="analytics-visits">0</span>
+              <span class="stat-label">Total Visits</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-num" id="analytics-last-visit" style="font-size:12px;">—</span>
+              <span class="stat-label">Last Visit</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="editor-card">
           <div class="editor-card-title">🔌 Card Status</div>
-          <p id="card-status-label" style="font-size:13px;color:var(--text-mid);margin-bottom:12px;">—</p>
+          <p id="card-status-label" style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">—</p>
           <button class="btn-secondary" id="card-toggle-btn" onclick="toggleCardActive()">—</button>
         </div>
 
         <div class="editor-card">
           <div class="editor-card-title">🔗 Temporary Customer Edit Link</div>
-          <p style="font-size:12px;color:var(--text-light);margin-top:-4px;margin-bottom:12px;">
+          <p style="font-size:12px;color:var(--text-muted);margin-top:-4px;margin-bottom:12px;">
             Customer ko ek link do jisse wo khud apna naam/date/venue/timeline
             2 ghante ke liye edit kar sake — photos, music, theme is se nahi badlenge.
           </p>
@@ -131,7 +145,7 @@
               <button class="btn-ghost" onclick="extendEditLink()">+2h Extend</button>
               <button class="btn-danger" onclick="revokeEditLink()">Revoke Now</button>
             </div>
-            <p style="font-size:13px;color:var(--text-mid);margin-top:10px;" id="edit-link-status">⏳ —</p>
+            <p style="font-size:13px;color:var(--text-secondary);margin-top:10px;" id="edit-link-status">⏳ —</p>
           </div>
         </div>
 
@@ -197,7 +211,7 @@
             <label class="form-label">Couple's WhatsApp Number</label>
             <input type="tel" class="form-input" id="c-whatsapp" placeholder="919876543210" inputmode="numeric">
           </div>
-          <p style="font-size:12px;color:var(--text-light);margin-top:-4px;">
+          <p style="font-size:12px;color:var(--text-muted);margin-top:-4px;">
             Country code ke saath, sirf digits — bina <b>+</b>, space ya dash ke.
             India ke liye <b>91</b> se shuru karo (jaise <b>919876543210</b>).
             Jab koi guest "Send Message" dabayega, uska poora message isi number par
