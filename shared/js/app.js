@@ -584,10 +584,25 @@ function loadSiteContent() {
       }
 
       applySiteContent(data);
+      recordVisit();
     })
     .catch(err => {
       console.warn('[App] Could not load site content, using defaults:', err);
     });
+}
+
+/* Bumps this wedding's visit counter by exactly 1, atomically — safe
+   even if many guests load the page at the same moment. Firestore
+   rules only allow this exact kind of write from a signed-out guest
+   (see isValidVisitIncrement), nothing else. Silently does nothing
+   if it fails — a guest should never see an error over this. */
+function recordVisit() {
+  db.collection('weddings').doc(WEDDING_SLUG).set({
+    visitCount: firebase.firestore.FieldValue.increment(1),
+    lastVisitAt: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true }).catch(err => {
+    console.warn('[App] Could not record visit:', err);
+  });
 }
 
 /* Card ON/OFF switch (set from the admin panel) — when off, replace
