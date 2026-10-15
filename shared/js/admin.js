@@ -187,6 +187,7 @@ function renderWeddingList() {
           </div>
           <span class="rsvp-badge ${w._status.cls}">${w._status.label}</span>
         </div>
+        <p style="font-size:11px;color:var(--text-muted);margin-top:4px;">👁️ ${w.visitCount || 0} visits</p>
         <div class="card-quick-actions" onclick="event.stopPropagation()">
           <button class="quick-btn" onclick='window.open(${JSON.stringify(publicUrl)}, "_blank")'>🔗 Open</button>
           <button class="quick-btn" onclick='quickCopyLink(${JSON.stringify(publicUrl)}, this)'>📋 Copy</button>
@@ -408,6 +409,23 @@ function refreshEditLinkStatus(tempEdit) {
 ═══════════════════════════════ */
 let currentCardActive = true;
 
+/* ═══════════════════════════════
+   ANALYTICS (per-wedding visit stats)
+═══════════════════════════════ */
+function renderAnalytics(visitCount, lastVisitAt) {
+  const visitsEl = document.getElementById('analytics-visits');
+  const lastEl   = document.getElementById('analytics-last-visit');
+  if (!visitsEl || !lastEl) return;
+
+  visitsEl.textContent = visitCount;
+
+  if (lastVisitAt && lastVisitAt.toDate) {
+    lastEl.textContent = lastVisitAt.toDate().toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+  } else {
+    lastEl.textContent = '—';
+  }
+}
+
 function renderCardStatus(isActive) {
   currentCardActive = isActive;
   const label = document.getElementById('card-status-label');
@@ -481,6 +499,7 @@ function loadContentIntoEditor() {
 
       refreshEditLinkStatus(data.tempEdit || null);
       renderCardStatus(data.cardActive !== false);
+      renderAnalytics(data.visitCount || 0, data.lastVisitAt || null);
       initLivePreviews();
     })
     .catch(err => {
