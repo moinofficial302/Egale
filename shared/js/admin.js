@@ -296,6 +296,7 @@ function selectWedding(id) {
   document.getElementById('wedding-list-view').style.display = 'none';
   document.getElementById('wedding-edit-view').style.display = 'block';
   loadContentIntoEditor();
+  renderQrCode(id);
 }
 
 function backToList() {
@@ -739,4 +740,111 @@ function saveContent() {
       btn.disabled = false;
       btn.textContent = 'Save Changes';
     });
+}
+
+/* ═══════════════════════════════
+   QR CODE (per wedding)
+   Rendered fully in the browser via the qrcode-generator library —
+   no live external API involved, so it works offline too once the
+   small library script has loaded.
+═══════════════════════════════ */
+function renderQrCode(weddingId) {
+  const container = document.getElementById('qr-code-container');
+  if (!container || typeof qrcode !== 'function') return;
+  container.innerHTML = '';
+
+  const url = buildPublicUrl(weddingId);
+  const qr = qrcode(0, 'M'); // type 0 = auto-size, M = medium error correction
+  qr.addData(url);
+  qr.make();
+
+  const moduleCount = qr.getModuleCount();
+  const cellSize = 6;
+  const margin = 4; // in cells
+  const canvasSize = (moduleCount + margin * 2) * cellSize;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = canvasSize;
+  canvas.height = canvasSize;
+  canvas.style.width = '180px';
+  canvas.style.height = '180px';
+  canvas.style.display = 'block';
+
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvasSize, canvasSize);
+  ctx.fillStyle = '#000000';
+  for (let row = 0; row < moduleCount; row++) {
+    for (let col = 0; col < moduleCount; col++) {
+      if (qr.isDark(row, col)) {
+        ctx.fillRect((col + margin) * cellSize, (row + margin) * cellSize, cellSize, cellSize);
+      }
+    }
+  }
+
+  container.appendChild(canvas);
+  window._currentQrCanvas = canvas;
+  window._currentQrWeddingId = weddingId;
+}
+
+function downloadQrCode() {
+  const canvas = window._currentQrCanvas;
+  if (!canvas) return;
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = `${window._currentQrWeddingId || 'wedding'}-qr-code.png`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+/* ═══════════════════════════════
+   EXPORT ALL WEDDINGS AS CSV
+   Uses the already-loaded allWeddings array from the list view —
+   no extra Firestore read needed.
+═══════════════════════════════ */
+function exportWeddingsCSV() {
+  if (!allWeddings.length) { alert('No weddings to export yet.'); return; }
+
+  const headers = ['Wedding ID', 'Groom', 'Bride', 'Wedding Date', 'Status', 'Card Active', 'Visit Count', 'Last Visit'];
+
+  const rows = allWeddings.map(w => {
+    const c = w.coupleNames || {};
+    const dateStr = w.weddingDateISO ? new Date(w.weddingDateISO).toLocaleDateString('en-GB') : '';
+    const lastVisit = (w.lastVisitAt && w.lastVisitAt.toDate) ? w.lastVisitAt.toDate().toLocaleDateString('en-GB') : '';
+    const statusLabel = w._status ? w._status.label.replace(/[📅✓⚠]/g, '').trim() : '';
+    return [
+      w.id,
+      c.groomName || '',
+      c.brideName || '',
+      dateStr,
+      statusLabel,
+      w.cardActive === false ? 'OFF' : 'ON',
+      w.visitCount || 0,
+      lastVisit
+    ];
+  });
+
+  const csvContent = [headers, ...rows]
+    .map(row => row.map(csvEscape).join(','))
+    .join('\r\n');
+
+  // Leading BOM so Excel reliably detects UTF-8 (names won't show as mojibake)
+  const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `weddings-export-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function csvEscape(value) {
+  const str = String(value ?? '');
+  if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+    return '"' + str.replace(/"/g, '""') + '"';
+  }
+  return str;
 }
