@@ -80,6 +80,8 @@
           </select>
         </div>
 
+        <button class="btn-secondary" style="width:100%;margin-bottom:14px;" onclick="exportWeddingsCSV()">📥 Export List as CSV</button>
+
         <div id="wedding-list">
           <div class="spinner"></div>
         </div>
@@ -117,6 +119,15 @@
               <span class="stat-num" id="analytics-last-visit" style="font-size:12px;">—</span>
               <span class="stat-label">Last Visit</span>
             </div>
+          </div>
+        </div>
+
+        <div class="editor-card">
+          <div class="editor-card-title">📱 QR Code</div>
+          <div style="text-align:center;">
+            <div id="qr-code-container" style="display:inline-block;background:#fff;padding:12px;border-radius:10px;line-height:0;"></div>
+            <br>
+            <button class="btn-secondary" style="margin-top:14px;" onclick="downloadQrCode()">⬇️ Download QR Code</button>
           </div>
         </div>
 
@@ -316,6 +327,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="../js/firebase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
   <script src="../js/admin.js"></script>
 
 </body>
