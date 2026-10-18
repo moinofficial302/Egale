@@ -5,14 +5,14 @@ body{background:var(--wine);font-family:var(--sans);font-weight:400}
 .scroll-hint,.names-ornament,.hero-heart,.hero::before,.hero::after,.divider,.section-icon,.card-icon,.wave-decor,.venue-illustration,.footer-wave,.footer-wave-bottom{display:none!important}
 
 /* HERO */
-.hero{aspect-ratio:auto;height:100svh;min-height:600px;max-height:none;background:var(--wine)}
+.hero{aspect-ratio:2/3;height:auto;min-height:0;max-height:100vh;background:var(--wine)}
 .hero-img{position:absolute;top:0;left:0}
 .hero-sparkle{opacity:.45}
-.hero-overlay{justify-content:flex-start;padding:calc(env(safe-area-inset-top,0px) + 9vh) 20px 0;background:linear-gradient(to bottom,rgba(40,0,12,.45),rgba(40,0,12,.05) 40%,rgba(40,0,12,0) 58%,rgba(70,0,24,.8))}
+.hero-overlay{justify-content:flex-start;padding:11% 20px 0;background:linear-gradient(to bottom,rgba(40,0,12,.45),rgba(40,0,12,.05) 40%,rgba(40,0,12,0) 58%,rgba(70,0,24,.8))}
 .hero-badge{font-family:var(--script);font-style:normal;font-weight:400;font-size:40px;letter-spacing:0;margin:0;color:#fff}
 .hero-badge::before,.hero-badge::after{display:none}
 .hero-date{font:400 28px var(--serif);letter-spacing:3px;color:#fff;margin-top:6px}
-.hero-name{margin-top:10vh;font-family:var(--script);font-weight:400;font-size:clamp(58px,17vw,88px);line-height:1.05;text-shadow:0 3px 24px rgba(0,0,0,.45)}
+.hero-name{margin-top:5%;font-family:var(--script);font-weight:400;font-size:clamp(58px,17vw,88px);line-height:1.05;text-shadow:0 3px 24px rgba(0,0,0,.45)}
 .hero-name span{display:block}
 .hero-amp{font-family:var(--script);font-style:normal;color:#fff;font-size:.5em;margin:0}
 .bridge{position:relative;height:0;z-index:6;pointer-events:none}
@@ -78,7 +78,7 @@ body{background:var(--wine);font-family:var(--sans);font-weight:400}
 .venue-name{font:400 30px var(--serif);color:var(--hd)}
 .venue-addr{font:400 19px/1.5 var(--serif);color:var(--fg)}
 .venue-map-wrap{border-radius:2px;border:1px solid var(--gold);box-shadow:0 12px 30px rgba(58,0,16,.18)}
-.venue-map-embed{filter:sepia(.25) saturate(.85)}
+.venue-map-embed{filter:none}
 .venue-map-open-btn{border-radius:99px;font:400 15px var(--serif);color:var(--wine)}
 .pw-name{font:400 32px var(--serif);color:var(--hd)}.pw-detail{font:300 19px var(--serif);color:var(--fg)}
 .prewedding-item{border:0!important}
@@ -94,8 +94,7 @@ body{background:var(--wine);font-family:var(--sans);font-weight:400}
 .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,164,92,.2)}
 
 /* FOOTER */
-.footer-section.band{min-height:720px;padding-bottom:340px!important}
-.footer-section.band::after{background:linear-gradient(to bottom,var(--wine) 0,var(--wine) 28%,rgba(102,0,30,.55) 52%,rgba(102,0,30,.05) 100%),url(../images/photo4.jpg) center bottom/cover no-repeat}
+.footer-section.band{min-height:0;padding-bottom:70px!important}
 .footer-names{font:400 28px var(--serif);color:#fff}
 .creator-bar{background:var(--wine-d);border:0}.creator-bar p{color:rgba(255,243,236,.7);font:300 16px var(--serif)}.creator-link{color:var(--gold)}
 
@@ -196,3 +195,11 @@ body{background:var(--wine);font-family:var(--sans);font-weight:400}
 .tl-flower{animation:floatY 4s ease-in-out infinite}
 @keyframes floatY{0%,100%{rotate:-6deg}50%{rotate:6deg}}
 @media(prefers-reduced-motion:reduce){.send-btn::after,.venue-map-btn::after,.hero-name span,.tl-flower,.tap-btn{animation:none!important}}
+
+/* ===== SCROLL PERFORMANCE ===== */
+#main-content *,.music-toggle,.install-btn,.toast{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.hero-sparkle,.send-btn::after,.venue-map-btn::after{display:none!important}
+.hero-img,.garland,.hero-name span,.tl-flower{animation:none!important;filter:none}
+.slide.active img{animation:kb 9s ease-out both}
+.hero{contain:paint}
+html{scroll-behavior:auto;-webkit-overflow-scrolling:touch}
