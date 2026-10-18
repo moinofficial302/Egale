@@ -132,7 +132,7 @@
         var r = card.getBoundingClientRect(), p = Math.min(1, Math.max(0, (innerHeight * .55 - r.top) / r.height));
         f.style.top = p * Math.max(0, r.height - 54) + 'px';
       };
-      addEventListener('scroll', mv, { passive: true }); mv(); setTimeout(mv, 1200);
+      var tk = false; addEventListener('scroll', function () { if (tk) return; tk = true; requestAnimationFrame(function () { tk = false; mv(); }); }, { passive: true }); mv(); setTimeout(mv, 1200);
     }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
@@ -151,8 +151,8 @@ if(card&&lab){var n=document.createElement('div');n.className='door-names';lab.b
 var up=function(){var g=document.getElementById('hero-groom-name'),b=document.getElementById('hero-bride-name');
 if(g&&b&&g.textContent.trim()){n.textContent=g.textContent.trim()+' & '+b.textContent.trim();if(W)W.textContent=g.textContent.trim()[0]+'&'+b.textContent.trim()[0]}};
 up();setTimeout(up,800);setTimeout(up,2500);['hero-groom-name','hero-bride-name'].forEach(function(id){var e=document.getElementById(id);if(e)new MutationObserver(up).observe(e,{childList:true,characterData:true,subtree:true})})}
-var f=document.createElement('div');f.className='fall';for(var j=0;j<9;j++){var q=document.createElement('span'),z=9+Math.random()*8;q.className='fp';
-q.style.cssText='left:'+(Math.random()*96)+'%;width:'+z+'px;height:'+z+'px;animation-duration:'+(15+Math.random()*10)+'s;animation-delay:'+(-Math.random()*20)+'s;background:linear-gradient(135deg,'+(j%3?'#d9304f,#8a1230':'#fffdf7,#d7c28a')+')';f.appendChild(q)}document.body.appendChild(f);var pg=document.createElement('div');pg.className='prog';document.body.appendChild(pg);addEventListener('scroll',function(){var h=document.documentElement.scrollHeight-innerHeight;pg.style.transform='scaleX('+(h>0?Math.min(1,scrollY/h):0)+')'},{passive:true})}
+var f=document.createElement('div');f.className='fall';for(var j=0;j<6;j++){var q=document.createElement('span'),z=9+Math.random()*8;q.className='fp';
+q.style.cssText='left:'+(Math.random()*96)+'%;width:'+z+'px;height:'+z+'px;animation-duration:'+(15+Math.random()*10)+'s;animation-delay:'+(-Math.random()*20)+'s;background:linear-gradient(135deg,'+(j%3?'#d9304f,#8a1230':'#fffdf7,#d7c28a')+')';f.appendChild(q)}document.body.appendChild(f);var pg=document.createElement('div');pg.className='prog';document.body.appendChild(pg);var H=0,tk=false,calc=function(){H=document.documentElement.scrollHeight-innerHeight};calc();addEventListener('resize',calc);addEventListener('load',calc);setTimeout(calc,2500);setTimeout(calc,6000);addEventListener('scroll',function(){if(tk)return;tk=true;requestAnimationFrame(function(){tk=false;pg.style.transform='scaleX('+(H>0?Math.min(1,scrollY/H):0)+')'})},{passive:true})}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go()})();
 
 /* Music: reliable start on door tap + icon always in sync */
