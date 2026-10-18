@@ -108,7 +108,7 @@
       var src = document.getElementById('scratch-date-text');
       var upd = function () {
         var d = src && new Date(src.textContent), p = function (n) { return ('0' + n).slice(-2); };
-        if (d && !isNaN(d)) dt.textContent = p(d.getDate()) + '.' + p(d.getMonth() + 1) + '.' + String(d.getFullYear()).slice(2);
+        if (d && !isNaN(d)) dt.textContent = p(d.getDate()) + ' · ' + p(d.getMonth() + 1) + ' · ' + d.getFullYear();
       };
       upd(); if (src) new MutationObserver(upd).observe(src, { childList: true, characterData: true, subtree: true });
     }
