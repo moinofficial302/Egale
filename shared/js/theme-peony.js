@@ -81,3 +81,12 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
+
+/* Door decor: peonies on both door panels + falling petals */
+(function(){function go(){var c=document.getElementById('envelope-cover');if(!c)return;
+var s='<svg class="door-flora" viewBox="0 0 200 430" preserveAspectRatio="xMidYMax slice" aria-hidden="true">';
+[[-5,330,80,-35],[60,300,75,-70],[110,350,70,-20],[-10,60,60,40],[40,30,60,70]].forEach(function(a){s+='<use href="#pL" transform="translate('+a[0]+' '+a[1]+') rotate('+a[3]+')" x="0" y="'+-a[2]*.2+'" width="'+a[2]+'" height="'+a[2]*.4+'"/>'});
+[['pR',35,388,58,10],['pC',108,398,50,40],['pR',160,414,34,0],['pC',20,24,40,20],['pR',72,8,28,60],['pC',130,350,24,0]].forEach(function(f){s+='<use href="#'+f[0]+'" transform="rotate('+f[4]+' '+f[1]+' '+f[2]+')" x="'+(f[1]-f[3])+'" y="'+(f[2]-f[3])+'" width="'+f[3]*2+'" height="'+f[3]*2+'"/>'});
+s+='</svg>';['.door-left','.door-right'].forEach(function(q){var d=c.querySelector(q);if(d)d.insertAdjacentHTML('beforeend',s)});
+for(var i=1;i<=6;i++){var p=document.createElement('span');p.className='petal p'+i;c.appendChild(p)}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go()})();
