@@ -53,7 +53,7 @@ body{background:var(--wine);font-family:var(--sans);font-weight:400}
 .count-unit{font:300 clamp(13px,3.7vw,18px) var(--serif);letter-spacing:0;text-transform:none;color:var(--fg);margin-top:12px}
 
 /* SCRATCH */
-.scratch-wrapper{border-radius:4px;box-shadow:0 0 0 1px var(--gold),0 14px 34px rgba(0,0,0,.35)}
+.scratch-wrapper{border-radius:6px;box-shadow:0 0 0 4px #c2183a,0 0 0 6px #fff9f6,0 0 0 7px #e8899b,0 16px 36px rgba(102,0,30,.38)}
 .scratch-revealed{background:var(--ivory);border:0}
 .you-invited{font:400 38px var(--script);color:var(--wine)}
 .date-text{font:400 28px var(--serif);color:#3a3335}.date-sub{color:var(--wine);font-weight:500}
@@ -215,3 +215,10 @@ html{scroll-behavior:auto;-webkit-overflow-scrolling:touch}
 .hero-amp::after{transform:scaleX(-1)}
 .hero-date{order:3;margin:22px 0 0;font:600 21px var(--serif);letter-spacing:5px;color:#f3e2b3;text-shadow:0 1px 10px rgba(0,0,0,.55)}
 .hero-date::before,.hero-date::after{content:'◆';font-size:8px;vertical-align:middle;margin:0 12px;color:#c9a45c;letter-spacing:0}
+
+/* ===== HERO: names lower (~20%), badge on one line ===== */
+.hero-overlay{justify-content:flex-start;padding:62% 20px 0}
+.hero-badge{white-space:nowrap;font-size:11.5px;letter-spacing:3.5px;margin-bottom:12px}
+.hero-badge::before,.hero-badge::after{flex:0 1 28px}
+.hero-amp{margin:2px 0}
+.hero-date{margin-top:16px}
