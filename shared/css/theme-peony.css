@@ -135,8 +135,8 @@ body{background:var(--wine);font-family:var(--sans);font-weight:400}
 /* ===== DOOR — ivory royal arch doors, rose crown, wax seal ===== */
 #envelope-cover{background:radial-gradient(ellipse at 50% 40%,#5a0018,#25000a)!important;animation:none;--door-seam:#c9a45c}
 #envelope-cover::before,.light-beam,.corner-frame,.star-accent{display:none!important}
-.door-left,.door-right{background-image:linear-gradient(100deg,transparent 42%,rgba(255,255,255,.6) 50%,transparent 58%),radial-gradient(ellipse 150% 90% at 50% 35%,#fffdf8,#f7eddc 55%,#e9d7ba)!important;box-shadow:none}
-.door-left::before,.door-right::before{content:'';position:absolute;background:none;inset:5% 0 5% 7%;border:1px solid #c9a45c;border-right:0;border-radius:200px 0 0 0;box-shadow:inset 0 0 0 7px #fbf2e4,inset 0 0 0 8px rgba(201,164,92,.7)}
+.door-left,.door-right{background-image:linear-gradient(180deg,rgba(255,255,255,.35),transparent 30%,transparent 80%,rgba(120,80,30,.18)),radial-gradient(ellipse 150% 90% at 50% 35%,#fffdf8,#f7eddc 55%,#e9d7ba)!important;box-shadow:none}
+.door-left::before,.door-right::before{content:'';position:absolute;background:none;inset:5% 0 5% 7%;border:1px solid #c9a45c;border-right:0;border-radius:200px 0 0 0;box-shadow:inset 0 0 0 7px #fbf2e4,inset 0 0 0 8px rgba(201,164,92,.7),inset 0 10px 26px rgba(120,80,30,.16),0 1px 0 rgba(255,255,255,.9)}
 .door-right::before{inset:5% 7% 5% 0;border:1px solid #c9a45c;border-left:0;border-radius:0 200px 0 0}
 .door-flora{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;transform-origin:50% 100%;animation:floraSway 7s ease-in-out infinite;will-change:rotate}
 .door-right .door-flora{transform:scaleX(-1)}
