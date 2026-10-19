@@ -504,7 +504,10 @@ function sendMessage() {
     `*Attending:* ${attendLabel[attendEl.value] || attendEl.value}\n\n` +
     `*Message:*\n${textEl.value.trim()}`;
 
-  window.open(`https://wa.me/${target}?text=${encodeURIComponent(message)}`, '_blank');
+  const waUrl = `https://wa.me/${target}?text=${encodeURIComponent(message)}`;
+  let waWin = null;
+  try { waWin = window.open(waUrl, '_blank'); } catch (e) { waWin = null; }
+  if (!waWin) window.location.href = waUrl; // popup blocked / in-app browsers: open WhatsApp in the same tab
 
   showToast('✓ Opening WhatsApp — tap Send to deliver your message');
   nameEl.value = '';
