@@ -84,6 +84,19 @@
     return '<use href="#' + sym + '" transform="translate(' + x + ' ' + y + ') rotate(' + rot + ')" x="' + -r + '" y="' + -r + '" width="' + r * 2 + '" height="' + r * 2 + '"/>';
   }
 
+  function scratchCorners() {
+    var w = document.querySelector('.scratch-wrapper'); if (!w || w.querySelector('.sc-c')) return;
+    var rose = new Image(), leaf = new Image(), n = 0;
+    function done() {
+      if (++n < 2) return;
+      var c = document.createElement('canvas'); c.width = c.height = 240; var x = c.getContext('2d');
+      [[132, 100, -12], [100, 132, 78]].forEach(function (l) { x.save(); x.translate(l[0], l[1]); x.rotate(l[2] * Math.PI / 180); x.drawImage(leaf, 0, -21, 104, 42); x.restore(); });
+      x.drawImage(rose, 45, 45, 110, 110);
+      w.style.setProperty('--sc', 'url(' + c.toDataURL('image/png') + ')');
+      ['tl', 'tr', 'bl', 'br'].forEach(function (k) { var d = document.createElement('i'); d.className = 'sc-c ' + k; w.appendChild(d); });
+    }
+    rose.onload = leaf.onload = done; rose.src = makeRose(300, PAL.r1, 11); leaf.src = makeLeaf();
+  }
   function garland() {
     var s = '<svg class="garland" viewBox="0 0 720 350" aria-hidden="true">';
     [[40, 170, 90, -40], [250, 120, 90, -70], [430, 110, 100, -110], [570, 140, 100, -145], [700, 170, 80, -160], [330, 250, 110, 8]].forEach(function (a) {
@@ -100,6 +113,7 @@
   function init() {
     var m = document.getElementById('main-content'); if (!m) return;
     buildSprite();
+    scratchCorners();
 
     var hero = m.querySelector('.hero'), badge = document.getElementById('hero-badge');
     if (hero) hero.after(bridge(false));
