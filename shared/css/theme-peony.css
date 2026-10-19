@@ -227,3 +227,8 @@ html{scroll-behavior:auto;-webkit-overflow-scrolling:touch}
 
 .venue-map-embed{border-radius:6px}
 .hero-date:empty{display:none}
+
+/* ===== KEEP EVERYTHING CENTERED — no sideways overflow (stops the right-side gap / auto-shrink in some browsers) ===== */
+#main-content{overflow-x:hidden;overflow-x:clip}
+.scratch-wrapper{width:auto!important;margin-left:8px!important;margin-right:8px!important}
+.venue-map-wrap{width:auto!important;margin:16px 8px 22px!important}
