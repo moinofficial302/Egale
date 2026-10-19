@@ -1,7 +1,7 @@
 /* Burgundy Peony theme — decor only. Door, app.js, Firebase untouched. */
 (function () {
   var l = document.createElement('link');
-  l.rel = 'stylesheet'; l.href = '../shared/css/theme-peony.css?v=20261020';
+  l.rel = 'stylesheet'; l.href = '../shared/css/theme-peony.css?v=20261021';
   document.head.appendChild(l);
 
   /* ---- Realistic roses & leaf, painted with canvas (no image files) ---- */
