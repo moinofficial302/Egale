@@ -70,6 +70,7 @@ function openEnvelope() {
   if (cover.classList.contains('opening')) return; // prevent double-trigger
 
   cover.classList.add('opening');
+  playMusic(); // start music right inside the tap (user gesture) so browsers always allow it
 
   // Doors take 1.3s to swing open (see .door-left / .door-right transition)
   setTimeout(() => {
@@ -355,7 +356,7 @@ function initScratchCard() {
 
     const scratchedRatio = transparentPixels / (totalPixels / 4);
 
-    if (scratchedRatio > 0.75) {
+    if (scratchedRatio > 0.65) { // 65% scratched -> auto-reveal the whole card
       hasRevealed = true;
       canvas.style.transition = 'opacity 0.6s ease';
       canvas.style.opacity = '0';
@@ -476,17 +477,13 @@ let coupleWhatsappNumber = '';
 
 function sendMessage() {
   const nameEl   = document.getElementById('msg-name');
-  const phoneEl  = document.getElementById('msg-phone');
   const attendEl = document.getElementById('msg-attend');
   const textEl   = document.getElementById('msg-text');
 
-  [nameEl, phoneEl, attendEl, textEl].forEach(el => el.classList.remove('error'));
+  [nameEl, attendEl, textEl].forEach(el => el.classList.remove('error'));
 
   let valid = true;
   if (!nameEl.value.trim()) { nameEl.classList.add('error'); valid = false; }
-  if (!phoneEl.value.trim() || !/^[0-9+\-\s()]{7,16}$/.test(phoneEl.value.trim())) {
-    phoneEl.classList.add('error'); valid = false;
-  }
   if (!attendEl.value) { attendEl.classList.add('error'); valid = false; }
   if (!textEl.value.trim()) { textEl.classList.add('error'); valid = false; }
 
@@ -504,7 +501,6 @@ function sendMessage() {
   const message =
     `*New message from your wedding invitation* 💌\n\n` +
     `*Name:* ${nameEl.value.trim()}\n` +
-    `*Phone:* ${phoneEl.value.trim()}\n` +
     `*Attending:* ${attendLabel[attendEl.value] || attendEl.value}\n\n` +
     `*Message:*\n${textEl.value.trim()}`;
 
@@ -512,7 +508,6 @@ function sendMessage() {
 
   showToast('✓ Opening WhatsApp — tap Send to deliver your message');
   nameEl.value = '';
-  phoneEl.value = '';
   attendEl.value = '';
   textEl.value = '';
 }
