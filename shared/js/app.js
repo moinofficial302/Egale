@@ -245,12 +245,15 @@ function initScratchCard() {
     const w = cssWidth, h = cssHeight; // always draw in logical pixels
 
     // ── Holographic Gold-Rose — iridescent shifting bands ──
+    // Themes may override the foil colours with CSS variables (--scratch-1 … --scratch-5); defaults keep the original look.
+    const sv = getComputedStyle(canvas);
+    const sc = (name, fallback) => (sv.getPropertyValue(name).trim() || fallback);
     const gradient = ctx.createLinearGradient(0, 0, w, h);
-    gradient.addColorStop(0,    '#f5d98a');
-    gradient.addColorStop(0.3,  '#e0a5b8');
-    gradient.addColorStop(0.55, '#d8c46a');
-    gradient.addColorStop(0.8,  '#c98bc4');
-    gradient.addColorStop(1,    '#f0d98a');
+    gradient.addColorStop(0,    sc('--scratch-1', '#f5d98a'));
+    gradient.addColorStop(0.3,  sc('--scratch-2', '#e0a5b8'));
+    gradient.addColorStop(0.55, sc('--scratch-3', '#d8c46a'));
+    gradient.addColorStop(0.8,  sc('--scratch-4', '#c98bc4'));
+    gradient.addColorStop(1,    sc('--scratch-5', '#f0d98a'));
     ctx.globalCompositeOperation = 'source-over';
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, w, h);
@@ -277,13 +280,13 @@ function initScratchCard() {
     // Soft vignette so the edges feel like a real card, not a flat fill
     const vignette = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.4, w / 2, h / 2, Math.max(w, h) * 0.75);
     vignette.addColorStop(0, 'rgba(0,0,0,0)');
-    vignette.addColorStop(1, 'rgba(70,30,50,0.18)');
+    vignette.addColorStop(1, sc('--scratch-vignette', 'rgba(70,30,50,0.18)'));
     ctx.fillStyle = vignette;
     ctx.fillRect(0, 0, w, h);
 
     // Thin inset frame — reads as a premium card edge
     const inset = Math.max(6, Math.min(w, h) * 0.035);
-    ctx.strokeStyle = 'rgba(255,250,235,0.45)';
+    ctx.strokeStyle = sc('--scratch-frame', 'rgba(255,250,235,0.45)');
     ctx.lineWidth = 1.2;
     ctx.strokeRect(inset, inset, w - inset * 2, h - inset * 2);
 
@@ -296,7 +299,7 @@ function initScratchCard() {
     ctx.shadowColor = 'rgba(60,30,40,0.5)';
     ctx.shadowBlur = 3;
     ctx.shadowOffsetY = 1;
-    ctx.fillStyle = '#fffaf0';
+    ctx.fillStyle = sc('--scratch-text', '#fffaf0');
     ctx.fillText('Scratch to Reveal', w / 2, h / 2);
     ctx.restore();
 
