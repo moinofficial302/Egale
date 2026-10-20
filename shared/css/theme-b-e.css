@@ -1,0 +1,249 @@
+@charset "UTF-8";
+/* ==========================================================================
+   BOTANICAL ESTATE — Wedding Invitation Theme 03  (theme-b-e.css)
+   "The Art of Timeless Romance"
+   Scoped under .theme-botanical-estate (put the class on <body>).
+   Loaded AFTER style7.css. Does not touch Romantic Rose / Burgundy Peony.
+   Sections: 1 Variables · 2 Base · 3 Typography · 4 Opening · 5 Hero
+   6 Botanical decoration · 7 Invitation · 8 Couple · 9 Countdown
+   10 Scratch card · 11 Gallery · 12 Timeline · 13 Venue · 14 Pre-wedding
+   15 Forms · 16 Buttons · 17 Scroll reveal · 18 Footer · 19 Floating controls
+   20 Overlays · 21 Responsive · 22 Accessibility · 23 Reduced motion · 24 Perf
+   ========================================================================== */
+
+/* 1. THEME VARIABLES (unique --estate-* names: safe to define on :root) */
+:root{
+  --estate-green:#173D32; --estate-green-dark:#102B23; --estate-moss:#687D62;
+  --estate-porcelain:#F8F5ED; --estate-sage:#E7EBDD; --estate-brass:#B79A62;
+  --estate-brass-text:#7A6232;               /* brass darkened for text on light grounds (AA) */
+  --estate-charcoal:#242A25; --estate-ivory:#FFFCF5; --estate-muted:#A7B59D;
+  --estate-border:rgba(183,154,98,.35); --estate-shadow:rgba(23,61,50,.10); --estate-shadow-deep:rgba(16,43,35,.22);
+  --estate-serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
+  --estate-sans:'Montserrat',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --estate-ease:cubic-bezier(.2,.7,.2,1);
+}
+
+/* 2. BASE THEME */
+.theme-botanical-estate{background:var(--estate-porcelain);color:var(--estate-charcoal);font-family:var(--estate-sans);font-weight:400;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.theme-botanical-estate #main-content{max-width:520px;margin:0 auto;background:var(--estate-porcelain);overflow-x:hidden;overflow-x:clip}
+.theme-botanical-estate #main-content.visible{animation:beMainIn .9s ease both}
+.theme-botanical-estate .scroll-hint,.theme-botanical-estate .hero-heart,.theme-botanical-estate .hero-sparkle,.theme-botanical-estate .section-icon,.theme-botanical-estate .card-icon,.theme-botanical-estate .venue-illustration,.theme-botanical-estate .wave-decor,.theme-botanical-estate .footer-wave,.theme-botanical-estate .footer-wave-bottom,.theme-botanical-estate .slide-overlay{display:none}
+.theme-botanical-estate .card{background:none;border:0;box-shadow:none;border-radius:0;padding:0;margin:0}
+.theme-botanical-estate .card::before,.theme-botanical-estate .card::after{display:none}
+.theme-botanical-estate .be-band{--be-bg:var(--estate-porcelain);--be-fg:var(--estate-charcoal);--be-head:var(--estate-green);--be-accent:var(--estate-brass-text);position:relative;isolation:isolate;width:100%;max-width:none;margin:0;padding:clamp(60px,15vw,92px) clamp(22px,6vw,40px)!important;text-align:center;color:var(--be-fg);overflow:visible}
+.theme-botanical-estate .be-band::after{content:'';position:absolute;z-index:-1;inset:0;background:var(--be-bg)}
+.theme-botanical-estate .be-band::before{content:'';position:absolute;z-index:1;top:0;left:50%;width:min(70%,260px);height:1px;transform:translateX(-50%);background:linear-gradient(90deg,transparent,var(--estate-brass),transparent)}
+.theme-botanical-estate .be-band.be-first::before{display:none}
+.theme-botanical-estate .be-sage{--be-bg:var(--estate-sage)}
+.theme-botanical-estate .be-green{--be-bg:var(--estate-green);--be-fg:var(--estate-ivory);--be-head:var(--estate-ivory);--be-accent:var(--estate-brass)}
+.theme-botanical-estate .be-deep{--be-bg:var(--estate-green-dark);--be-fg:var(--estate-ivory);--be-head:var(--estate-ivory);--be-accent:var(--estate-brass)}
+
+/* 3. TYPOGRAPHY */
+.theme-botanical-estate .section-title,.theme-botanical-estate .scratch-title,.theme-botanical-estate .countdown-label,.theme-botanical-estate .footer-msg{font:600 clamp(30px,7vw,46px)/1.15 var(--estate-serif);letter-spacing:.005em;color:var(--be-head);background:none;-webkit-text-fill-color:currentColor;text-shadow:none;animation:none;margin:0 0 6px;text-transform:none;text-wrap:balance;overflow-wrap:break-word}
+.theme-botanical-estate .section-title::before,.theme-botanical-estate .scratch-title::before,.theme-botanical-estate .countdown-label::before,.theme-botanical-estate .footer-msg::before{content:'';display:block;width:34px;height:34px;margin:0 auto 14px;background:url(../images/be-sprig.svg) center/contain no-repeat}
+.theme-botanical-estate .divider{display:flex;align-items:center;justify-content:center;gap:12px;width:min(220px,60%);margin:14px auto 30px}
+.theme-botanical-estate .divider::before,.theme-botanical-estate .divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--estate-brass))}
+.theme-botanical-estate .divider::after{transform:scaleX(-1)}
+.theme-botanical-estate .divider span{flex:none;width:6px;height:6px;font-size:0;background:var(--estate-brass);transform:rotate(45deg)}
+.theme-botanical-estate .be-band p{overflow-wrap:break-word}
+
+/* 4. OPENING EXPERIENCE — botanical estate gates (panels slide apart; JS logic untouched: 1.3s) */
+.theme-botanical-estate #envelope-cover{background:var(--estate-porcelain) url(../images/be-sprig.svg) center 42%/84px no-repeat;perspective:none;animation:none}
+.theme-botanical-estate #envelope-cover::before,.theme-botanical-estate #envelope-cover::after,.theme-botanical-estate .light-beam,.theme-botanical-estate .corner-frame,.theme-botanical-estate .star-accent,.theme-botanical-estate .tap-btn,.theme-botanical-estate .tap-text-small{display:none}
+.theme-botanical-estate .door-left,.theme-botanical-estate .door-right{position:absolute;top:0;bottom:0;width:50.3%;transform:none;transform-origin:center;animation:none;box-shadow:none;border:0;background:linear-gradient(180deg,#1b4739,var(--estate-green) 45%,var(--estate-green-dark));background-size:auto;will-change:transform}
+.theme-botanical-estate .door-left{left:0;right:auto}.theme-botanical-estate .door-right{right:0;left:auto}
+.theme-botanical-estate .door-left::after,.theme-botanical-estate .door-right::after{display:none}
+.theme-botanical-estate .door-left::before,.theme-botanical-estate .door-right::before{content:'';position:absolute;background:none;inset:5% 0 5% 8%;border:1px solid var(--estate-brass);border-right:0;border-radius:999px 0 0 0;opacity:.8;box-shadow:inset 0 0 0 7px var(--estate-green),inset 0 0 0 8px rgba(183,154,98,.4)}
+.theme-botanical-estate .door-right::before{inset:5% 8% 5% 0;border:1px solid var(--estate-brass);border-left:0;border-radius:0 999px 0 0}
+.theme-botanical-estate .door-center-line{width:1px;background:linear-gradient(180deg,transparent,var(--estate-brass),transparent);opacity:.7;box-shadow:none}
+.theme-botanical-estate .be-flora{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.theme-botanical-estate .door-right .be-flora{transform:scaleX(-1)}
+.theme-botanical-estate .be-flora path{fill:none;stroke:var(--estate-brass);stroke-width:.65;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;animation:beDraw 1.7s var(--estate-ease) forwards;animation-delay:calc(.3s + var(--i,0) * .07s)}
+.theme-botanical-estate .envelope-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:3;transition:opacity .35s ease}
+.theme-botanical-estate .env-card{display:flex;flex-direction:column;align-items:center;text-align:center;max-width:min(88vw,460px);background:none;border:0;box-shadow:none;padding:0}
+.theme-botanical-estate .env-label{font:500 11px/1.4 var(--estate-sans);letter-spacing:.3em;text-transform:uppercase;color:var(--estate-brass);text-shadow:none;margin:0 0 20px;animation:beFade 1s ease .8s both}
+.theme-botanical-estate .env-label::before,.theme-botanical-estate .env-label::after{display:none}
+.theme-botanical-estate .be-door-names{margin:0;font:600 clamp(38px,11.5vw,68px)/1.02 var(--estate-serif);letter-spacing:.06em;text-transform:uppercase;color:var(--estate-ivory);text-wrap:balance;overflow-wrap:anywhere;animation:beRise 1s var(--estate-ease) 1s both}
+.theme-botanical-estate .be-door-names i{display:block;font:italic 400 .42em/1 var(--estate-serif);letter-spacing:0;text-transform:none;color:var(--estate-brass);margin:.35em 0}
+.theme-botanical-estate .be-door-date{margin:22px 0 0;font:500 11px/1.4 var(--estate-sans);letter-spacing:.32em;text-transform:uppercase;color:rgba(255,252,245,.86);animation:beFade 1s ease 1.4s both}
+.theme-botanical-estate .tap-text{margin:34px 0 0;animation:beFade 1s ease 1.8s both}
+.theme-botanical-estate .tap-text span{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 28px;border:1px solid var(--estate-brass);color:var(--estate-ivory);font:500 11px/1 var(--estate-sans);letter-spacing:.26em;text-transform:uppercase;text-shadow:none;transition:background-color .3s ease,color .3s ease}
+.theme-botanical-estate .tap-text span::after{content:'';width:18px;height:1px;margin-left:14px;background:currentColor;transform-origin:left;animation:beCue 2.4s ease-in-out infinite}
+.theme-botanical-estate .tap-text:hover span{background:var(--estate-ivory);color:var(--estate-green)}
+.theme-botanical-estate #envelope-cover.opening{pointer-events:none;animation:beCoverOut .3s ease 1s forwards}
+.theme-botanical-estate #envelope-cover.opening .envelope-inner{opacity:0}
+.theme-botanical-estate #envelope-cover.opening .door-left{animation:beGateL 1.2s cubic-bezier(.76,0,.24,1) forwards}
+.theme-botanical-estate #envelope-cover.opening .door-right{animation:beGateR 1.2s cubic-bezier(.76,0,.24,1) forwards}
+.theme-botanical-estate #envelope-cover.opening .door-center-line{opacity:0;transition:opacity .3s}
+
+/* 5. HERO */
+.theme-botanical-estate .hero{aspect-ratio:2/3;height:auto;min-height:0;max-height:100vh;background:var(--estate-green-dark)}
+.theme-botanical-estate .hero-img{position:absolute;top:0;left:0;width:100%;height:115%;object-fit:cover;object-position:center 30%;animation:none;filter:none}
+.theme-botanical-estate #main-content.visible .hero-img{animation:beHeroIn 2.4s var(--estate-ease) both}
+.theme-botanical-estate .hero::before,.theme-botanical-estate .hero::after{display:none}
+.theme-botanical-estate .hero-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;text-align:center;padding:0 clamp(20px,6vw,40px) clamp(30px,9vw,56px);background:linear-gradient(to top,rgba(16,43,35,.92) 0%,rgba(16,43,35,.72) 30%,rgba(16,43,35,.22) 56%,rgba(16,43,35,0) 74%)}
+.theme-botanical-estate .hero-badge{order:1;margin:0 0 10px;font:500 11px/1.5 var(--estate-sans);letter-spacing:.28em;text-transform:uppercase;color:var(--estate-ivory);opacity:.92}
+.theme-botanical-estate .hero-badge::before,.theme-botanical-estate .hero-badge::after{display:none}
+.theme-botanical-estate .be-together{order:2;margin:0 0 10px;font:italic 400 clamp(17px,4.4vw,22px)/1.3 var(--estate-serif);color:rgba(255,252,245,.9)}
+.theme-botanical-estate .hero-name{order:3;margin:0;max-width:100%;font:600 clamp(44px,12vw,92px)/1 var(--estate-serif);letter-spacing:.05em;text-transform:uppercase;color:var(--estate-ivory);text-shadow:0 2px 24px rgba(0,0,0,.35);text-wrap:balance;overflow-wrap:anywhere;animation:none}
+.theme-botanical-estate .hero-name span{display:block;animation:none}
+.theme-botanical-estate .hero-name .hero-amp{display:flex;align-items:center;justify-content:center;gap:14px;margin:.12em 0;font:italic 400 .46em/1 var(--estate-serif);letter-spacing:0;text-transform:none;color:var(--estate-brass)}
+.theme-botanical-estate .hero-amp::before,.theme-botanical-estate .hero-amp::after{content:'';width:clamp(34px,12vw,60px);height:1px;background:linear-gradient(90deg,transparent,var(--estate-brass))}
+.theme-botanical-estate .hero-amp::after{transform:scaleX(-1)}
+.theme-botanical-estate .be-invite{order:4;margin:18px 0 6px;font:500 11px/1.4 var(--estate-sans);letter-spacing:.24em;text-transform:uppercase;color:rgba(255,252,245,.86)}
+.theme-botanical-estate .be-hero-date{order:5;margin:0 0 20px;font:600 clamp(18px,4.8vw,24px)/1.2 var(--estate-serif);letter-spacing:.18em;color:var(--estate-ivory)}
+.theme-botanical-estate .be-hero-btn{order:6;display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 30px;border:1px solid rgba(255,252,245,.8);color:var(--estate-ivory);font:500 11px/1 var(--estate-sans);letter-spacing:.24em;text-transform:uppercase;text-decoration:none;background:transparent;transition:background-color .3s ease,color .3s ease}
+.theme-botanical-estate #main-content.visible .hero-overlay>*{animation:beRise .9s var(--estate-ease) both}
+.theme-botanical-estate #main-content.visible .hero-overlay>:nth-child(2){animation-delay:.12s}.theme-botanical-estate #main-content.visible .hero-overlay>:nth-child(3){animation-delay:.24s}.theme-botanical-estate #main-content.visible .hero-overlay>:nth-child(4){animation-delay:.36s}.theme-botanical-estate #main-content.visible .hero-overlay>:nth-child(5){animation-delay:.46s}.theme-botanical-estate #main-content.visible .hero-overlay>:nth-child(6){animation-delay:.56s}
+
+/* 7. INVITATION TEXT */
+.theme-botanical-estate .invite-text{margin:0 auto;padding:0;max-width:34ch;text-align:center}
+.theme-botanical-estate .invite-text p{margin:0;font:400 clamp(20px,5vw,24px)/1.7 var(--estate-serif);color:var(--be-fg);font-style:normal}
+
+/* 8. COUPLE AND FAMILY */
+.theme-botanical-estate .names-ornament{display:block;width:min(60%,200px);height:1px;margin:0 auto 28px;font-size:0;color:transparent;background:linear-gradient(90deg,transparent,var(--estate-brass),transparent)}
+.theme-botanical-estate .names-ornament:last-child{margin:28px auto 0}
+.theme-botanical-estate .names-couple-block{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.theme-botanical-estate .names-side{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;min-width:0}
+.theme-botanical-estate .names-person{font:600 clamp(28px,7.6vw,38px)/1.15 var(--estate-serif);letter-spacing:.01em;color:var(--be-head);background:none;-webkit-text-fill-color:currentColor;text-wrap:balance;overflow-wrap:anywhere}
+.theme-botanical-estate .names-role{font:500 11px/1.4 var(--estate-sans);letter-spacing:.3em;text-transform:uppercase;color:var(--be-accent)}
+.theme-botanical-estate .names-father{max-width:30ch;font:italic 400 clamp(17px,4.6vw,20px)/1.45 var(--estate-serif);color:var(--be-fg);opacity:.88;overflow-wrap:anywhere}
+.theme-botanical-estate .names-ampersand{display:flex;align-items:center;gap:14px;margin:12px 0;font:italic 400 36px/1 var(--estate-serif);color:var(--estate-brass)}
+.theme-botanical-estate .names-ampersand::before,.theme-botanical-estate .names-ampersand::after{content:'';width:44px;height:1px;background:linear-gradient(90deg,transparent,var(--estate-brass))}
+.theme-botanical-estate .names-ampersand::after{transform:scaleX(-1)}
+
+/* 9. COUNTDOWN */
+.theme-botanical-estate .countdown-grid{display:flex;align-items:flex-start;justify-content:center;gap:0;margin:0 auto;max-width:100%}
+.theme-botanical-estate .count-item{position:relative;flex:1 1 0;min-width:0;padding:0 clamp(4px,1.6vw,10px);background:none;border:0;box-shadow:none;border-radius:0;display:flex;flex-direction:column;align-items:center;gap:10px}
+.theme-botanical-estate .count-item:not(:last-child)::after{content:':';position:absolute;right:-.28em;top:0;font:500 clamp(34px,10vw,60px)/1 var(--estate-serif);color:var(--estate-brass)}
+.theme-botanical-estate .count-num{font:500 clamp(36px,11vw,64px)/1 var(--estate-serif);font-variant-numeric:lining-nums tabular-nums;color:var(--be-head);background:none;-webkit-text-fill-color:currentColor}
+.theme-botanical-estate .count-unit{font:500 clamp(9px,2.6vw,11px)/1.2 var(--estate-sans);letter-spacing:.2em;text-transform:uppercase;color:var(--be-accent)}
+
+/* 10. SCRATCH CARD (foil colours are read by app.js from these variables) */
+.theme-botanical-estate .scratch-wrapper{--scratch-1:#2f5d4b;--scratch-2:#4f7a62;--scratch-3:#3a6753;--scratch-4:#668e75;--scratch-5:#2f5d4b;--scratch-vignette:rgba(10,30,22,.28);--scratch-frame:rgba(183,154,98,.85);--scratch-text:#FFFCF5;border-radius:2px;border:1px solid var(--estate-brass);box-shadow:0 0 0 6px rgba(183,154,98,.16),0 14px 30px var(--estate-shadow-deep);touch-action:none}
+.theme-botanical-estate .scratch-revealed{background:var(--estate-porcelain);border:0;color:var(--estate-charcoal)}
+.theme-botanical-estate .you-invited{font:600 clamp(26px,7vw,34px)/1.1 var(--estate-serif);color:var(--estate-green)}
+.theme-botanical-estate .date-text{font:600 clamp(22px,6vw,30px)/1.2 var(--estate-serif);color:var(--estate-charcoal)}
+.theme-botanical-estate .date-sub{font:500 11px/1.4 var(--estate-sans);letter-spacing:.24em;text-transform:uppercase;color:var(--estate-brass-text)}
+.theme-botanical-estate .scratch-hint{margin-top:22px;font:500 11px/1.4 var(--estate-sans);letter-spacing:.26em;text-transform:uppercase;color:var(--be-fg);opacity:.85}
+
+/* 11. GALLERY */
+.theme-botanical-estate .slideshow{border-radius:0;box-shadow:none;border:0;margin:8px;outline:1px solid var(--estate-brass);outline-offset:8px;background:var(--estate-green-dark)}
+.theme-botanical-estate .slide img{object-fit:cover;filter:none}
+.theme-botanical-estate .slide{transition:opacity 1.2s ease}
+.theme-botanical-estate .slide-dots{gap:6px;background:none;padding:0;bottom:12px}
+.theme-botanical-estate .slide-dot{width:16px;height:2px;border-radius:0;background:rgba(255,252,245,.55);transition:width .4s ease,background-color .4s ease}
+.theme-botanical-estate .slide-dot.active{width:28px;background:var(--estate-ivory)}
+
+/* 12. TIMELINE */
+.theme-botanical-estate #timeline-list{position:relative;text-align:left;max-width:360px;margin:0 auto}
+.theme-botanical-estate #timeline-list::before{content:'';position:absolute;left:5px;top:6px;bottom:6px;width:1px;background:linear-gradient(180deg,transparent,var(--estate-brass) 8%,var(--estate-brass) 92%,transparent)}
+.theme-botanical-estate .timeline-item{display:flex;align-items:flex-start;gap:24px;padding:0 0 36px;border:0;background:none;position:relative}
+.theme-botanical-estate .timeline-item:last-child{padding-bottom:0}
+.theme-botanical-estate .tl-dot{flex:none;width:11px;height:11px;margin-top:9px;border-radius:0;background:var(--estate-brass);box-shadow:0 0 0 4px var(--be-bg);transform:rotate(45deg);position:relative;z-index:1}
+.theme-botanical-estate .timeline-item>div:not(.tl-dot){display:flex;flex-direction:column-reverse;min-width:0}
+.theme-botanical-estate .tl-time{font:600 clamp(20px,5.4vw,26px)/1.25 var(--estate-serif);color:var(--estate-brass);letter-spacing:.02em}
+.theme-botanical-estate .tl-title{margin-top:4px;font:500 clamp(14px,3.8vw,16px)/1.5 var(--estate-sans);letter-spacing:.04em;color:var(--be-fg);overflow-wrap:anywhere}
+
+/* 13. VENUE */
+.theme-botanical-estate .venue-name{font:600 clamp(26px,6.6vw,34px)/1.2 var(--estate-serif);color:var(--be-head);text-wrap:balance;overflow-wrap:anywhere}
+.theme-botanical-estate .venue-addr{max-width:34ch;margin:8px auto 26px;font:400 15px/1.7 var(--estate-sans);color:var(--be-fg)}
+.theme-botanical-estate .venue-map-wrap{position:relative;border-radius:0;border:1px solid var(--estate-brass);box-shadow:0 12px 28px var(--estate-shadow);overflow:hidden;margin:0 0 24px;background:var(--estate-sage)}
+.theme-botanical-estate .venue-map-embed{filter:none}
+.theme-botanical-estate .venue-map-open-btn{border-radius:0;background:var(--estate-ivory);color:var(--estate-green);font:500 10px/1 var(--estate-sans);letter-spacing:.18em;text-transform:uppercase;text-decoration:none;box-shadow:0 2px 8px var(--estate-shadow-deep)}
+
+/* 14. PRE-WEDDING EVENTS */
+.theme-botanical-estate #prewedding-list{max-width:360px;margin:0 auto}
+.theme-botanical-estate .prewedding-item{padding:22px 0;border:0;border-bottom:1px solid var(--estate-border);background:none;box-shadow:none;border-radius:0}
+.theme-botanical-estate .prewedding-item:first-child{border-top:1px solid var(--estate-border)}
+.theme-botanical-estate .pw-name{font:600 clamp(24px,6.4vw,30px)/1.2 var(--estate-serif);color:var(--be-head);overflow-wrap:anywhere}
+.theme-botanical-estate .pw-detail{margin-top:6px;font:500 12px/1.6 var(--estate-sans);letter-spacing:.14em;text-transform:uppercase;color:var(--be-accent)}
+
+/* 15. FORMS AND RSVP */
+.theme-botanical-estate .form-group{margin:0 0 20px;text-align:left}
+.theme-botanical-estate .form-label{display:block;margin-bottom:8px;font:500 11px/1.4 var(--estate-sans);letter-spacing:.2em;text-transform:uppercase;color:var(--estate-green)}
+.theme-botanical-estate .form-input,.theme-botanical-estate .form-select,.theme-botanical-estate .form-textarea{width:100%;min-height:50px;padding:13px 16px;background:var(--estate-porcelain);color:var(--estate-charcoal);border:1px solid rgba(23,61,50,.28);border-radius:0;font:400 16px/1.4 var(--estate-sans);box-shadow:none;-webkit-appearance:none;appearance:none;transition:border-color .25s ease,box-shadow .25s ease}
+.theme-botanical-estate .form-textarea{min-height:120px;resize:vertical}
+.theme-botanical-estate .form-select{background-image:linear-gradient(45deg,transparent 50%,var(--estate-green) 50%),linear-gradient(135deg,var(--estate-green) 50%,transparent 50%);background-position:calc(100% - 20px) 55%,calc(100% - 14px) 55%;background-size:6px 6px;background-repeat:no-repeat;padding-right:40px}
+.theme-botanical-estate .form-input::placeholder,.theme-botanical-estate .form-textarea::placeholder{color:#5e6a60;opacity:1}
+.theme-botanical-estate .form-input:focus,.theme-botanical-estate .form-select:focus,.theme-botanical-estate .form-textarea:focus{outline:none;border-color:var(--estate-brass);box-shadow:0 0 0 3px rgba(183,154,98,.35)}
+.theme-botanical-estate .form-input.error,.theme-botanical-estate .form-select.error,.theme-botanical-estate .form-textarea.error{border-color:#9b2c2c;border-left-width:5px;box-shadow:none}
+
+/* 16. BUTTONS (primary green · secondary outline · dark-section ivory) */
+.theme-botanical-estate .send-btn,.theme-botanical-estate .venue-map-btn,.theme-botanical-estate .congrats-close{display:inline-flex;align-items:center;justify-content:center;width:100%;max-width:360px;min-height:50px;padding:0 28px;border:1px solid var(--estate-green);border-radius:0;background:var(--estate-green);color:var(--estate-ivory);font:500 12px/1 var(--estate-sans);letter-spacing:.22em;text-transform:uppercase;text-decoration:none;box-shadow:none;cursor:pointer;transition:background-color .3s ease,color .3s ease,transform .3s ease,box-shadow .3s ease}
+.theme-botanical-estate .venue-map-btn{background:transparent;color:var(--estate-green)}
+.theme-botanical-estate .be-green .send-btn,.theme-botanical-estate .be-deep .send-btn{background:var(--estate-ivory);color:var(--estate-green);border-color:var(--estate-ivory)}
+.theme-botanical-estate .send-btn:active,.theme-botanical-estate .venue-map-btn:active,.theme-botanical-estate .congrats-close:active{transform:translateY(1px)}
+@media (hover:hover){
+  .theme-botanical-estate .send-btn:hover,.theme-botanical-estate .congrats-close:hover{background:var(--estate-green-dark);box-shadow:0 8px 18px var(--estate-shadow-deep);transform:translateY(-1px)}
+  .theme-botanical-estate .venue-map-btn:hover{background:var(--estate-green);color:var(--estate-ivory)}
+  .theme-botanical-estate .be-hero-btn:hover{background:var(--estate-ivory);color:var(--estate-green)}
+}
+
+/* 17. SCROLL REVEAL (app.js adds .revealed; theme JS adds a backup + failsafe) */
+.theme-botanical-estate .reveal-on-scroll{opacity:1;transform:none}
+.be-js .reveal-on-scroll>*{opacity:0;transform:translateY(16px);transition:opacity 1s var(--estate-ease),transform 1s var(--estate-ease)}
+.be-js .reveal-on-scroll.revealed>*,.be-js.be-reveal-all .reveal-on-scroll>*{opacity:1;transform:none}
+.be-js .reveal-on-scroll.revealed>:nth-child(2){transition-delay:.1s}.be-js .reveal-on-scroll.revealed>:nth-child(3){transition-delay:.2s}.be-js .reveal-on-scroll.revealed>:nth-child(4){transition-delay:.3s}
+.theme-botanical-estate .reveal-on-scroll .timeline-item,.theme-botanical-estate .reveal-on-scroll .prewedding-item{opacity:1;transform:none;animation:none}
+
+/* 18. CLOSING / FOOTER */
+.theme-botanical-estate .footer-section.be-band{padding-bottom:clamp(48px,12vw,72px)!important}
+.theme-botanical-estate .footer-msg{margin-bottom:14px}
+.theme-botanical-estate .footer-names{font:600 clamp(20px,5.4vw,26px)/1.3 var(--estate-serif);letter-spacing:.1em;text-transform:uppercase;color:var(--estate-ivory);overflow-wrap:anywhere}
+.theme-botanical-estate .be-foot-date{margin:10px 0 0;font:500 11px/1.4 var(--estate-sans);letter-spacing:.3em;text-transform:uppercase;color:var(--estate-brass)}
+.theme-botanical-estate .creator-bar{background:#0b211a;border:0;padding:18px 20px calc(18px + env(safe-area-inset-bottom))}
+.theme-botanical-estate .creator-bar p{margin:0;font:400 12px/1.7 var(--estate-sans);color:rgba(255,252,245,.78)}
+.theme-botanical-estate .creator-link{color:var(--estate-ivory);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+
+/* 19. FLOATING CONTROLS */
+.theme-botanical-estate .music-toggle{position:fixed;top:auto;left:auto;bottom:max(18px,env(safe-area-inset-bottom));right:max(16px,env(safe-area-inset-right));width:46px;height:46px;border-radius:50%;background:var(--estate-green);border:1px solid var(--estate-brass);color:var(--estate-ivory);font-size:17px;line-height:1;box-shadow:0 4px 14px var(--estate-shadow-deep);z-index:1100}
+.theme-botanical-estate .install-btn{top:auto;right:auto;left:max(14px,env(safe-area-inset-left));bottom:max(20px,env(safe-area-inset-bottom));padding:10px 14px;border-radius:0;background:var(--estate-ivory);color:var(--estate-green);border:1px solid var(--estate-brass);font:500 11px/1 var(--estate-sans);letter-spacing:.08em;box-shadow:0 4px 14px var(--estate-shadow-deep)}
+.theme-botanical-estate .toast{background:var(--estate-green-dark);color:var(--estate-ivory);border:1px solid var(--estate-border);border-radius:0;font:500 13px/1.4 var(--estate-sans);letter-spacing:.04em;box-shadow:0 8px 22px var(--estate-shadow-deep)}
+
+/* 20. OVERLAYS */
+.theme-botanical-estate #congrats-overlay{background:rgba(16,43,35,.8);-webkit-backdrop-filter:none;backdrop-filter:none}
+.theme-botanical-estate .congrats-card{width:min(88vw,380px);padding:40px 28px 32px;background:var(--estate-porcelain);border:1px solid var(--estate-brass);border-radius:0;box-shadow:0 24px 60px var(--estate-shadow-deep);outline:1px solid var(--estate-border);outline-offset:-10px;text-align:center}
+.theme-botanical-estate .congrats-emoji{display:block;width:34px;height:34px;margin:0 auto 14px;font-size:0;background:url(../images/be-sprig.svg) center/contain no-repeat}
+.theme-botanical-estate .congrats-title{font:600 clamp(30px,8vw,38px)/1.15 var(--estate-serif);color:var(--estate-green);background:none;-webkit-text-fill-color:currentColor}
+.theme-botanical-estate .congrats-sub{margin:12px 0 24px;font:400 15px/1.7 var(--estate-sans);color:var(--estate-charcoal);font-style:normal}
+
+/* 21. RESPONSIVE */
+@media (max-width:359px){
+  .theme-botanical-estate .tap-text span{padding:0 18px;letter-spacing:.2em}
+  .theme-botanical-estate .count-item{padding:0 3px}
+}
+@media (min-width:560px){
+  .theme-botanical-estate{background:var(--estate-green-dark)}
+  .theme-botanical-estate #main-content{box-shadow:0 0 80px rgba(0,0,0,.45)}
+}
+@media (min-width:1024px){
+  .theme-botanical-estate .music-toggle{right:24px}
+}
+
+/* 22. ACCESSIBILITY */
+.theme-botanical-estate :focus-visible{outline:2px solid var(--estate-brass);outline-offset:3px}
+.theme-botanical-estate .be-green :focus-visible,.theme-botanical-estate .be-deep :focus-visible,.theme-botanical-estate #envelope-cover:focus-visible{outline-color:var(--estate-ivory)}
+.theme-botanical-estate .tap-text span,.theme-botanical-estate .be-flora{-webkit-tap-highlight-color:transparent}
+
+/* keyframes */
+@keyframes beMainIn{from{opacity:0}to{opacity:1}}
+@keyframes beHeroIn{from{scale:1.07}to{scale:1}}
+@keyframes beRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes beFade{from{opacity:0}to{opacity:1}}
+@keyframes beDraw{to{stroke-dashoffset:0}}
+@keyframes beCue{0%,100%{transform:scaleX(.35)}50%{transform:scaleX(1)}}
+@keyframes beGateL{to{transform:translate3d(-101%,0,0)}}
+@keyframes beGateR{to{transform:translate3d(101%,0,0)}}
+@keyframes beCoverOut{to{opacity:0}}
+
+/* 23. REDUCED MOTION */
+@media (prefers-reduced-motion:reduce){
+  .theme-botanical-estate *,.theme-botanical-estate *::before,.theme-botanical-estate *::after{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0s!important}
+  .be-js .reveal-on-scroll>*{opacity:1;transform:none}
+  .theme-botanical-estate .be-flora path{stroke-dashoffset:0}
+}
+
+/* 24. PERFORMANCE */
+.theme-botanical-estate #main-content *{-webkit-backdrop-filter:none;backdrop-filter:none}
+.theme-botanical-estate .reveal-on-scroll>*{will-change:auto}
