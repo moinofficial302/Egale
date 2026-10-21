@@ -1,50 +1,56 @@
 /* ═══════════════════════════════════════════════════
    ADMIN PANEL — admin.css
-   "Deep Slate & Teal" — a dark, modern professional
-   dashboard theme. One confident accent (teal) against
-   deep navy-slate surfaces, soft borders, no gradients
-   except on primary buttons.
+   "AKANS Admin" style — light, clean, modern SaaS look.
+   Inter font, blue accent, white cards on a soft gray
+   page, light tinted badges, gentle shadows. Auto-adapts
+   to the phone's dark mode too (prefers-color-scheme).
 
    NOTE: the "Live Preview" mockups (.preview-*) intentionally
    stay LIGHT and use the WEDDING SITE's own rose/gold colors
-   (--site-*), not this dark admin theme — they're meant to read
-   as a little window showing exactly what the public (light,
-   pink) site looks like, regardless of the admin panel's own
-   theme. Left untouched by this redesign on purpose.
+   (--site-*), not this admin theme — they're a little accurate
+   window into the real (pink) public site regardless of the
+   admin panel's own theme or light/dark mode. Untouched here.
 ═══════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Surfaces */
-  --bg-page:     #0B1220;
-  --bg-card:     #141B2D;
-  --bg-card-alt: #1B2338;
-  --bg-input:    #0F1726;
-  --border-soft: rgba(255,255,255,0.09);
-  --border-mid:  rgba(255,255,255,0.14);
+  --bg:        #F1F5F9;
+  --surface:   #FFFFFF;
+  --surface-2: #F8FAFC;
+  --border:    #E2E8F0;
 
-  /* Accent — the one confident color */
-  --accent:      #14B8A6;
-  --accent-dark: #0D9488;
-  --accent-grad: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
-  --accent-soft: rgba(20,184,166,0.14);
+  --fg:   #0F172A;
+  --fg-2: #475569;
+  --fg-3: #94A3B8;
 
-  /* Text */
-  --text-primary:   #F1F5F9;
-  --text-secondary: #94A3B8;
-  --text-muted:     #64748B;
+  --accent:    #2563EB;
+  --accent-lt: #EFF6FF;
+  --accent-dk: #1D4ED8;
+  --accent-grad: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
 
-  /* Status colors (functional, tuned for dark backgrounds) */
-  --ok:       #34D399;
-  --ok-bg:    rgba(52,211,153,0.14);
-  --no:       #F87171;
-  --no-bg:    rgba(248,113,113,0.14);
-  --maybe:    #FBBF24;
-  --maybe-bg: rgba(251,191,36,0.14);
+  --ok:       #16A34A;
+  --ok-bg:    #F0FDF4;
+  --no:       #DC2626;
+  --no-bg:    #FEF2F2;
+  --maybe:    #D97706;
+  --maybe-bg: #FFF7ED;
 
-  /* Wedding SITE's own colors — used only in .preview-* mockups
-     below, so the "live preview" stays accurate to the real site */
+  /* Legacy names — dashboard.html / admin.js / edit.html use these in
+     inline style="" attributes, so they must keep resolving. */
+  --text-primary:   var(--fg);
+  --text-secondary: var(--fg-2);
+  --text-mid:       var(--fg-2);
+  --text-light:     var(--fg-3);
+  --text-muted:     var(--fg-3);
+
+  --shadow-sm: 0 1px 3px rgba(15,23,42,0.08), 0 1px 2px rgba(15,23,42,0.05);
+  --shadow-md: 0 4px 14px rgba(15,23,42,0.08);
+  --shadow-lg: 0 20px 50px rgba(15,23,42,0.18);
+
+  /* Wedding SITE's own colors — used only in .preview-* mockups below */
   --site-rose:       #c5768a;
   --site-rose-dark:  #a85870;
   --site-gold:       #c9a96e;
@@ -52,14 +58,33 @@
   --site-text-light: #625151;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:        #0B1220;
+    --surface:   #141B2D;
+    --surface-2: #1B2338;
+    --border:    rgba(255,255,255,0.09);
+
+    --fg:   #F1F5F9;
+    --fg-2: #94A3B8;
+    --fg-3: #64748B;
+
+    --accent-lt: rgba(37,99,235,0.14);
+
+    --ok-bg:    rgba(22,163,74,0.14);
+    --no-bg:    rgba(220,38,38,0.14);
+    --maybe-bg: rgba(217,119,6,0.14);
+  }
+}
+
 html { -webkit-text-size-adjust: 100%; }
 body {
-  font-family: 'Montserrat', sans-serif;
-  color: var(--text-primary);
-  background: var(--bg-page);
+  font-family: 'Inter', sans-serif;
+  color: var(--fg);
+  background: var(--bg);
   -webkit-font-smoothing: antialiased;
 }
-::selection { background: var(--accent); color: #04211c; }
+::selection { background: var(--accent); color: white; }
 a { color: var(--accent); }
 button { font-family: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -70,42 +95,44 @@ button { font-family: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-page);
+  background: var(--bg);
   padding: 24px;
 }
 .login-card {
   width: 100%;
   max-width: 340px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-soft);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 40px 28px;
   text-align: center;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+  box-shadow: var(--shadow-lg);
 }
 .login-emblem {
-  width: 56px; height: 56px;
+  width: 52px; height: 52px;
   margin: 0 auto 16px;
   border-radius: 14px;
   background: var(--accent-grad);
   display: flex; align-items: center; justify-content: center;
-  color: #04211c;
-  font-size: 22px;
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  box-shadow: 0 6px 16px rgba(37,99,235,0.35);
 }
 .login-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 700;
-  font-size: 24px;
-  color: var(--text-primary);
+  font-size: 23px;
+  color: var(--fg);
   margin-bottom: 2px;
 }
 .login-sub {
   font-size: 13px;
-  color: var(--text-muted);
-  letter-spacing: 0.3px;
+  color: var(--fg-3);
+  letter-spacing: 0.2px;
   margin-bottom: 28px;
 }
-.login-body .form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.login-body .form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-lt); }
 .login-error {
   color: var(--no);
   font-size: 12px;
@@ -119,59 +146,56 @@ button { font-family: inherit; }
   display: block;
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.6px;
   text-transform: uppercase;
-  color: var(--text-secondary);
+  color: var(--fg-2);
   margin-bottom: 6px;
 }
 .form-input, .form-select, .form-textarea {
   width: 100%;
   padding: 12px 14px;
-  border: 1px solid var(--border-soft);
-  border-radius: 9px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
   font-size: 14px;
   font-family: inherit;
-  color: var(--text-primary);
-  background: var(--bg-input);
+  color: var(--fg);
+  background: var(--surface);
   outline: none;
-  transition: border-color .2s, box-shadow .2s;
+  transition: border-color .15s, box-shadow .15s;
 }
-.form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); }
+.form-input::placeholder, .form-textarea::placeholder { color: var(--fg-3); }
 .form-input:focus, .form-select:focus, .form-textarea:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-soft);
+  box-shadow: 0 0 0 3px var(--accent-lt);
 }
 .form-textarea { resize: vertical; min-height: 80px; }
 .form-row { display: flex; gap: 12px; }
 .form-row .form-group { flex: 1; }
-
-/* select options render with the OS's native light popover on most
-   mobile browsers regardless of our styling — force readable colors */
 .form-select option { color: #000; background: #fff; }
 
 .btn-primary {
   width: 100%;
   background: var(--accent-grad);
-  color: #04211c;
+  color: white;
   border: none;
   padding: 14px;
-  border-radius: 9px;
+  border-radius: 10px;
   font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(20,184,166,0.30);
+  box-shadow: 0 4px 14px rgba(37,99,235,0.30);
   transition: transform .15s, box-shadow .15s;
 }
 .btn-primary:active { transform: scale(0.98); }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
 
 .btn-secondary {
-  background: var(--bg-card-alt);
+  background: var(--surface);
   color: var(--accent);
   border: 1px solid var(--accent);
   padding: 10px 16px;
-  border-radius: 8px;
+  border-radius: 9px;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -179,7 +203,7 @@ button { font-family: inherit; }
 .btn-danger {
   background: var(--no-bg);
   color: var(--no);
-  border: 1px solid rgba(248,113,113,0.3);
+  border: 1px solid rgba(220,38,38,0.25);
   padding: 8px 14px;
   border-radius: 8px;
   font-size: 12px;
@@ -187,9 +211,9 @@ button { font-family: inherit; }
   cursor: pointer;
 }
 .btn-ghost {
-  background: transparent;
-  border: 1px solid var(--border-mid);
-  color: var(--text-primary);
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
   padding: 8px 16px;
   border-radius: 20px;
   font-size: 12px;
@@ -198,25 +222,35 @@ button { font-family: inherit; }
 
 /* ─── DASHBOARD SHELL ─── */
 .dash-header {
-  background: var(--bg-card);
-  color: var(--text-primary);
+  background: var(--fg);
+  color: white;
   padding: 16px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: sticky; top: 0; z-index: 100;
-  border-bottom: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-sm);
 }
 .dash-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 700;
-  font-size: 18px;
-  color: var(--text-primary);
+  font-size: 17px;
+  color: white;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
-.dash-title .heart { color: var(--accent); font-size: 16px; }
+/* the heart sits inside a small rounded "brand dot" square, like
+   AKANS Admin's own logo mark */
+.dash-title .heart {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent-grad);
+  border-radius: 8px;
+  font-size: 14px;
+  color: white;
+  flex-shrink: 0;
+}
 
 .dash-content { padding: 20px 16px 60px; max-width: 640px; margin: 0 auto; }
 .tab-panel { display: none; }
@@ -225,28 +259,29 @@ button { font-family: inherit; }
 
 .section-heading {
   font-weight: 700;
-  font-size: 18px;
-  color: var(--text-primary);
+  font-size: 17px;
+  color: var(--fg);
   margin: 24px 0 12px;
 }
 .section-heading:first-child { margin-top: 0; }
 
 /* ─── CARDS (also reused for the "All Weddings" list rows) ─── */
 .rsvp-card {
-  background: var(--bg-card);
+  background: var(--surface);
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 12px;
-  border: 1px solid var(--border-soft);
-  transition: border-color .15s, background .15s;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: border-color .15s, box-shadow .15s;
 }
 .rsvp-card[style*="cursor:pointer"]:hover,
 .rsvp-card[style*="cursor: pointer"]:hover {
   border-color: var(--accent);
-  background: var(--bg-card-alt);
+  box-shadow: var(--shadow-md);
 }
 .rsvp-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
-.rsvp-name { font-weight: 600; font-size: 15px; color: var(--text-primary); }
+.rsvp-name { font-weight: 600; font-size: 15px; color: var(--fg); }
 .rsvp-phone { font-size: 12px; color: var(--accent); text-decoration: none; }
 .rsvp-badge {
   font-size: 10px;
@@ -264,7 +299,7 @@ button { font-family: inherit; }
 .empty-state {
   text-align: center;
   padding: 40px 20px;
-  color: var(--text-muted);
+  color: var(--fg-3);
   font-size: 13px;
 }
 .empty-state .emoji { font-size: 32px; display: block; margin-bottom: 8px; }
@@ -277,15 +312,16 @@ button { font-family: inherit; }
   margin-bottom: 16px;
 }
 .stat-box {
-  background: var(--bg-card-alt);
-  border: 1px solid var(--border-soft);
-  border-radius: 10px;
-  padding: 10px 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 4px;
   text-align: center;
+  box-shadow: var(--shadow-sm);
 }
 .stat-num {
   display: block;
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 700;
   color: var(--accent);
 }
@@ -294,7 +330,7 @@ button { font-family: inherit; }
   font-size: 9px;
   letter-spacing: 0.4px;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--fg-3);
   margin-top: 2px;
 }
 
@@ -304,33 +340,34 @@ button { font-family: inherit; }
   gap: 6px;
   margin-top: 10px;
   padding-top: 10px;
-  border-top: 1px solid var(--border-soft);
+  border-top: 1px solid var(--border);
 }
 .quick-btn {
   flex: 1;
-  background: var(--bg-input);
-  border: 1px solid var(--border-soft);
-  color: var(--text-secondary);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--fg-2);
   font-size: 11px;
   font-weight: 500;
   padding: 7px 4px;
-  border-radius: 7px;
+  border-radius: 8px;
   cursor: pointer;
 }
-.quick-btn:active { background: var(--accent-soft); color: var(--accent); }
+.quick-btn:active { background: var(--accent-lt); color: var(--accent); border-color: var(--accent); }
 
 /* ─── CONTENT EDITOR ─── */
 .editor-card {
-  background: var(--bg-card);
+  background: var(--surface);
   border-radius: 12px;
   padding: 18px;
   margin-bottom: 16px;
-  border: 1px solid var(--border-soft);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
 }
 .editor-card-title {
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.6px;
   text-transform: uppercase;
   color: var(--accent);
   margin-bottom: 14px;
@@ -340,12 +377,12 @@ button { font-family: inherit; }
 }
 
 .repeat-item {
-  border: 1px dashed var(--border-mid);
+  border: 1px dashed var(--border);
   border-radius: 10px;
   padding: 12px;
   margin-bottom: 10px;
   position: relative;
-  background: var(--bg-card-alt);
+  background: var(--surface-2);
 }
 .repeat-remove {
   position: absolute; top: 8px; right: 8px;
@@ -362,7 +399,7 @@ button { font-family: inherit; }
   width: 100%;
   padding: 10px;
   border: 1px dashed var(--accent);
-  background: var(--accent-soft);
+  background: var(--accent-lt);
   color: var(--accent);
   border-radius: 9px;
   font-size: 13px;
@@ -374,7 +411,7 @@ button { font-family: inherit; }
 .save-bar {
   position: sticky;
   bottom: 0;
-  background: linear-gradient(to top, var(--bg-page) 60%, transparent);
+  background: linear-gradient(to top, var(--bg) 60%, transparent);
   padding: 16px 0 0;
 }
 .save-status {
@@ -386,15 +423,14 @@ button { font-family: inherit; }
 }
 
 /* ─── LIVE PREVIEW ───
-   A deliberately LIGHT "window" showing the real (pink) wedding
-   site — stays light + uses --site-* colors regardless of the dark
-   admin theme above, so it's always an accurate little mockup of
-   what guests actually see. Do not recolor to match the dark theme. */
+   A deliberately light "window" showing the real (pink) wedding
+   site — always uses --site-* colors, regardless of admin theme
+   or light/dark mode. Do not recolor to match the theme above. */
 .live-preview {
   margin-top: 16px;
   padding: 14px;
-  background: #Faf8f6;
-  border: 1px solid var(--border-mid);
+  background: #FAF8F6;
+  border: 1px solid #E8DCD6;
   border-radius: 10px;
 }
 .live-preview-label {
@@ -402,7 +438,7 @@ button { font-family: inherit; }
   font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  color: var(--accent-dark);
+  color: var(--accent-dk);
   margin-bottom: 10px;
 }
 
@@ -535,7 +571,7 @@ button { font-family: inherit; }
 /* Loading spinner */
 .spinner {
   width: 26px; height: 26px;
-  border: 3px solid var(--accent-soft);
+  border: 3px solid var(--accent-lt);
   border-top-color: var(--accent);
   border-radius: 50%;
   animation: spin .7s linear infinite;
@@ -552,15 +588,15 @@ button { font-family: inherit; }
   align-items: center;
   gap: 6px;
   background: var(--accent-grad);
-  color: #04211c;
+  color: white;
   border: none;
   padding: 12px 18px;
   border-radius: 30px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  box-shadow: 0 6px 20px rgba(37,99,235,0.35);
   cursor: pointer;
 }
 .install-btn.show { display: flex; animation: fadeIn .4s ease; }
