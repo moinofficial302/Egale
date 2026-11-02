@@ -210,14 +210,24 @@ button { font-family: inherit; }
   font-weight: 600;
   cursor: pointer;
 }
+/* Default ghost button is neutral so it's readable on light cards and
+   the page background ("← All Weddings", "+Xh Extend"). Inside the dark
+   header bar (Logout) it switches to the white-on-dark style below. */
 .btn-ghost {
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.3);
-  color: white;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--fg);
   padding: 8px 16px;
   border-radius: 20px;
   font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
+}
+.btn-ghost:active { border-color: var(--accent); color: var(--accent); }
+.dash-header .btn-ghost {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.3);
+  color: white;
 }
 
 /* ─── DASHBOARD SHELL ─── */
