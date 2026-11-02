@@ -141,10 +141,18 @@
           <div class="editor-card-title">🔗 Temporary Customer Edit Link</div>
           <p style="font-size:12px;color:var(--text-muted);margin-top:-4px;margin-bottom:12px;">
             Customer ko ek link do jisse wo khud apna naam/date/venue/timeline
-            2 ghante ke liye edit kar sake — photos, music, theme is se nahi badlenge.
+            kuch ghante ke liye edit kar sake — photos, music, theme is se nahi badlenge.
           </p>
+          <div class="form-group">
+            <label class="form-label">Link Kitni Der Chalega</label>
+            <select class="form-select" id="edit-link-duration" onchange="updateEditLinkButtons()">
+              <option value="2" selected>2 Hours</option>
+              <option value="6">6 Hours</option>
+              <option value="12">12 Hours</option>
+            </select>
+          </div>
           <div id="edit-link-inactive">
-            <button class="btn-primary" onclick="generateEditLink()">Generate 2-Hour Link</button>
+            <button class="btn-primary" id="edit-link-generate-btn" onclick="generateEditLink()">Generate 2-Hour Link</button>
           </div>
           <div id="edit-link-active" style="display:none;">
             <div class="form-group">
@@ -153,7 +161,7 @@
             </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap;">
               <button class="btn-primary" style="flex:1;min-width:120px;" onclick="copyEditLink()">📋 Copy Link</button>
-              <button class="btn-ghost" onclick="extendEditLink()">+2h Extend</button>
+              <button class="btn-ghost" id="edit-link-extend-btn" onclick="extendEditLink()">+2h Extend</button>
               <button class="btn-danger" onclick="revokeEditLink()">Revoke Now</button>
             </div>
             <p style="font-size:13px;color:var(--text-secondary);margin-top:10px;" id="edit-link-status">⏳ —</p>
