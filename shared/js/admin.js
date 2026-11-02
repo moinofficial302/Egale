@@ -292,6 +292,8 @@ function createNewWedding() {
 function selectWedding(id) {
   if (editLinkCountdownTimer) { clearInterval(editLinkCountdownTimer); editLinkCountdownTimer = null; }
   currentWeddingId = id;
+  const durSel = document.getElementById('edit-link-duration');
+  if (durSel) durSel.value = '2';
   document.getElementById('editing-wedding-label').textContent = `Editing: /${id}/`;
   document.getElementById('wedding-list-view').style.display = 'none';
   document.getElementById('wedding-edit-view').style.display = 'block';
@@ -321,10 +323,32 @@ function buildEditLinkUrl(weddingId, token) {
   return `${base}?w=${encodeURIComponent(weddingId)}&t=${encodeURIComponent(token)}`;
 }
 
+/* Only these three durations are offered; anything else falls back to 2h */
+const EDIT_LINK_DURATIONS_H = [2, 6, 12];
+
+function getEditLinkDurationHours() {
+  const sel = document.getElementById('edit-link-duration');
+  const h = sel ? parseInt(sel.value, 10) : 2;
+  return EDIT_LINK_DURATIONS_H.includes(h) ? h : 2;
+}
+
+function getEditLinkDurationMs() {
+  return getEditLinkDurationHours() * 60 * 60 * 1000;
+}
+
+/* Keeps the two button labels in step with the chosen duration */
+function updateEditLinkButtons() {
+  const h = getEditLinkDurationHours();
+  const gen = document.getElementById('edit-link-generate-btn');
+  const ext = document.getElementById('edit-link-extend-btn');
+  if (gen) gen.textContent = `Generate ${h}-Hour Link`;
+  if (ext) ext.textContent = `+${h}h Extend`;
+}
+
 function generateEditLink() {
   const token = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(36).slice(2))
     .replace(/-/g, '');
-  const expiresAt = firebase.firestore.Timestamp.fromMillis(Date.now() + 2 * 60 * 60 * 1000);
+  const expiresAt = firebase.firestore.Timestamp.fromMillis(Date.now() + getEditLinkDurationMs());
   const tempEdit = { token, expiresAt };
 
   db.collection('weddings').doc(currentWeddingId).set({ tempEdit }, { merge: true })
@@ -333,7 +357,7 @@ function generateEditLink() {
 }
 
 function extendEditLink() {
-  const expiresAt = firebase.firestore.Timestamp.fromMillis(Date.now() + 2 * 60 * 60 * 1000);
+  const expiresAt = firebase.firestore.Timestamp.fromMillis(Date.now() + getEditLinkDurationMs());
   db.collection('weddings').doc(currentWeddingId).get().then(doc => {
     const existing = (doc.data() || {}).tempEdit;
     if (!existing) { generateEditLink(); return; }
@@ -366,6 +390,7 @@ function copyEditLink() {
 }
 
 function refreshEditLinkStatus(tempEdit) {
+  updateEditLinkButtons();
   if (editLinkCountdownTimer) { clearInterval(editLinkCountdownTimer); editLinkCountdownTimer = null; }
 
   const inactiveEl = document.getElementById('edit-link-inactive');
